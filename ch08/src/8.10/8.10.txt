@@ -1,0 +1,3 @@
+line1: Hello!
+line2: Motherfucker!
+line3: Bye!
