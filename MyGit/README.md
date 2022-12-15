@@ -22,9 +22,11 @@ Some commonly used git commands and solutions.
 | `git remote -v` | Check remote repository list |
 | `git remote add` \<remote_name\> \<repo_url\> | Add a remote repository with a name |
 | `git remote set-url` \<remote_name\> \<repo_url\> | Change a remote's URL |
+| `git remote set-head \<remote_name\> \<branch_name\> ` | Set the default branch for remote repository |
 | `touch` \<file_name\> | Create a file |
 | `git branch` | Check all the branches |
 | `git branch` \<branch_name\> | Create a branch with a name |
+| `git branch -a` | List both remote-tracking branches and local branches |
 | `git checkout` \<branch_name\> | Switch to that branch |
 | `git branch --set-upstream-to` \<remote_name\>`/`\<remote_branch_name\> | Set the branch's upstream (you can use -u instead of --set-upstream-to) |
 | `git branch -vv` | Find out which remote branch a local branch is tracking |
@@ -58,3 +60,4 @@ Some commonly used git commands and solutions.
 - [Checking out pull requests locally](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally)
 - [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 - [How to check real git diff before merging from remote branch](https://stackoverflow.com/questions/4944376/how-to-check-real-git-diff-before-merging-from-remote-branch)
+- [How to push an existing project to Github](https://www.digitalocean.com/community/tutorials/how-to-push-an-existing-project-to-github)
