@@ -1,5 +1,5 @@
 # Trashcan
-Unimportant stuff, like small projects, solutions of exercises, notebooks, etc.
+Unimportant stuff, like small projects, solutions of exercises, notebooks, etc. Check each branch for details.
 
 - [Sand](../.././tree/Sand): A mini programming language with ll(1) parser and a simple interpreter.
 - [CSAPP](../.././tree/CSAPP): Solutions of labs from [Computer Systems: A Programmer's Perspective, 3rd Edition](https://www.amazon.com/Computer-Systems-Programmers-Perspective-3rd/dp/013409266X/ref=tmm_hrd_swatch_0?_encoding=UTF8&qid=1671011351&sr=8-1).
