@@ -39,6 +39,14 @@
     else \
         bp = makeStr(tp->getText()); 
 
+#define BPTOSTRING(bp, str) \
+    if (bp->getType() == STR) \
+        str = std::static_pointer_cast<String>(bp)->getStr(); \
+    else if (bp->getType() == INT) \
+        str = std::to_string(std::static_pointer_cast<Int>(bp)->getInt()); \
+    else if (bp->getType() == BOOL) \
+        str = std::static_pointer_cast<Bool>(bp)->getBool() ? "true" : "false";
+
 void Interpreter::inter(ASTreePtr p)
 {
     int code = p->getCode();
@@ -193,12 +201,18 @@ BasePtr Interpreter::eval(ASTreePtr t)
         if (l == nullptr || r == nullptr)
             throw SandException("Void can't be the operand at " + esp->left()->location());
 
-        if (l->getType() == r->getType() && l->getType() == STR) {
-            if (oper == "+")
-                return makeStr(std::static_pointer_cast<String>(l)->getStr()
-                        + std::static_pointer_cast<String>(r)->getStr());
+        //if (l->getType() == r->getType() && l->getType() == STR) {
+        if (l->getType() == STR || r->getType() == STR) {
+            if (oper == "+") {
+                std::string left, right;
+                BPTOSTRING(l, left);
+                BPTOSTRING(r, right);
+                return makeStr(left + right);
+            }
             else
                 throw SandException("Illegal operations for string at " + esp->left()->location());
+            //return makeStr(std::static_pointer_cast<String>(l)->getStr()
+            //        + std::static_pointer_cast<String>(r)->getStr());
         }
         else if (l->getType() == STR || r->getType() == STR)
             throw SandException("Illegal operatiosn for string and other type at " 
