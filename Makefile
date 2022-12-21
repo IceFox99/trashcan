@@ -8,7 +8,8 @@ OUT := lexer_runner parser_runner interpreter_runner
 
 LEX_LIB := token.cpp exception.cpp lexer.cpp
 PAR_LIB := ast/astree.cpp ast/astlist.cpp ast/astleaf.cpp ast/obj.cpp ast/null_stmnt.cpp ast/assign_stmnt.cpp ast/expr_stmnt.cpp \
-			ast/if_stmnt.cpp ast/while_stmnt.cpp ast/block_stmnt.cpp parser.cpp
+			ast/if_stmnt.cpp ast/while_stmnt.cpp ast/block_stmnt.cpp ast/func_stmnt.cpp ast/funcdef_stmnt.cpp ast/return_stmnt.cpp \
+			parser.cpp
 INT_LIB := interpreter.cpp 
 
 LEX_SRC += $(LEX_LIB) lexer_runner.cpp

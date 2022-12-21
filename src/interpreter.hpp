@@ -5,7 +5,11 @@
 #include "ast/astleaf.hpp"
 #include "ast/assign_stmnt.hpp"
 #include "ast/expr_stmnt.hpp"
+#include "ast/funcdef_stmnt.hpp"
 #include <unordered_map>
+
+#define VarStack std::unordered_map<std::string, BasePtr>
+#define FuncStack std::unordered_map<std::string, FuncDefStmntPtr>
 
 class Interpreter {
 public:
@@ -13,7 +17,14 @@ public:
 private:
     BasePtr eval(ASTreePtr t);
     bool isTrue(ASTreePtr c);
-    std::unordered_map<std::string, BasePtr> vars;
+
+    VarStack vars; // Variables for global namespace
+    std::unordered_map<std::string, VarStack> funcVars; // Variables for function namespace
+    VarStack retVars; // Variables for function return value
+    FuncStack funcs; // Function block statement for each function
+
+    bool isGlobal = true; // namespace flag
+    std::string currFuncName;
 };
 
 #endif

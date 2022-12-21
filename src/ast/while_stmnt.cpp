@@ -1,6 +1,5 @@
 #include "while_stmnt.hpp"
 #include "code.hpp"
-#include "../exception.hpp"
 
 //WhileStmnt::WhileStmnt(ASTreePtrVec c) :
 //    ASTList(c) {}

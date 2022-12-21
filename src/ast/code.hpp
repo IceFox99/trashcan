@@ -9,6 +9,9 @@
 #define IFSTMNT 4
 #define WHILESTMNT 5
 #define BLOCK 6
+#define FUNCDEF 7
+#define FUNC 8
+#define RETURN 9
 
 #define INT "int"
 #define STR "string"

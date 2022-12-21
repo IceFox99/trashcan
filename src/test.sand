@@ -1,37 +1,73 @@
-str = "me";
-;;
-"hello world";
-test = -10;
-test + 100;
-//test = test + 2;
-3 * 5 * (2 - 4);
-//(if);
-(2);
-(2 + 4);
-(((2 + (((((4))))))));
-4 + (2 + 4);
-if (test == 1) {
-    "god";
-    "what";
+//i = 100;
+//i;
+//func test(i) {
+//    i = i + 10;
+//    i;
+//    test = 100;
+//    test = test * 100 + 5;
+//    return test;
+//}
+//test(i);
+//i;
+//10 + test(i);
+//"---------------";
+//func shit(i) {
+//    test(i);
+//}
+//func test(i) {
+//    "hello world";
+//}
+//shit(i);
+//i;
+//i;
+//str = "me";
+//;;
+//"hello world";
+//test = -10;
+//test + 100;
+////test = test + 2;
+//3 * 5 * (2 - 4);
+////(if);
+//(2);
+//(2 + 4);
+//(((2 + (((((4))))))));
+//4 + (2 + 4);
+//if (test == 1) {
+//    "god";
+//    "what";
+//}
+//else {
+//    "geeze";
+//}
+//i = 0;
+//sum = 0;
+//while (i < 10) {
+//    sum = sum + i;
+//    i = i + 1;
+//    str;
+//}
+//sum;
+//i = j = k = 1 + 2 + 3 * 4 / 5 - 6 - 1000;
+//"stop here";
+//i;
+//j;
+//k;
+//i = 1 + 2 * 3 - 4;
+//1 + 2 / 3 - 4;
+//i = 1 + 2 + 3;
+//i = j = 1 + 2 + 3;
+//3 + 4 == 5 + 2;
+func fact(i) {
+    if (i == 1)
+        return 1;
+    else {
+        return i * fact(i - 1);
+    }
 }
-else {
-    "geeze";
-}
-i = 0;
-sum = 0;
-while (i < 10) {
-    sum = sum + i;
-    i = i + 1;
-    str;
-}
-sum;
-i = j = k = 1 + 2 + 3 * 4 / 5 - 6 - 1000;
-"stop here";
-i;
+j = fact(j);
 j;
-k;
-i = 1 + 2 * 3 - 4;
-1 + 2 / 3 - 4;
-i = 1 + 2 + 3;
-i = j = 1 + 2 + 3;
-3 + 4 == 5 + 2;
+func fact() {
+    "test";
+
+}
+fact();

@@ -7,21 +7,27 @@
 #include "ast/expr_stmnt.hpp"
 #include "ast/while_stmnt.hpp"
 #include "ast/if_stmnt.hpp"
+#include "ast/return_stmnt.hpp"
+#include "ast/funcdef_stmnt.hpp"
+#include "ast/func_stmnt.hpp"
 
 /**
  * This is the EBNF of the grammar, parse function will
  * return a statement each time.
  *
- * primary: "(" expr ")" | NUMBER | IDENTIFIER | STRING
+ * primary: "(" expr ")" | func | NUMBER | IDENTIFIER | STRING
  * expr: primary { OP primary }
+ * func: IDENTIFIER "(" { expr "," } [ expr ] ")"
+ * func_def: "func" IDENTIFIER "(" { IDENTIFIER "," } [ IDENTIFIER ] ")" block
+ * return: "return" expr
  * block: "{" { statement } "}"
  * statement: "if" "(" expr ")" ( block | statement ) [ "else" ( block | statement ) ]  
  *          | "while" "(" expr ")" ( block | statement )
- *          | expr ";"
+ *          | ( expr | return ) ";" | func_def
  */
 
-const std::unordered_set<std::string> Parser::reserved { ";", "{", "}", Token::SEOL, \
-        "if", "else", "while" };
+const std::unordered_set<std::string> Parser::reserved { ",", ";", "{", "}", Token::SEOL, \
+        "if", "else", "while", "func", "return" };
 const std::unordered_map<std::string, Parser::Precedence> Parser::operators { \
     std::make_pair("=", Precedence(1, false)), \
     std::make_pair("==", Precedence(2, true)), \
@@ -44,25 +50,31 @@ ASTreePtr Parser::parse(Lexer& l) {
     if (t->isEOF())
         throw SandException("Parsing end of file", t);
 
-    if (t->isIdentifier() && t->getText() == "while")
-        return expectWhile(l);
-    else if (t->isIdentifier() && t->getText() == "if")
-        return expectIf(l);
-    else {
-        if (t->isIdentifier() && t->getText() == ";") {
+    if (t->isIdentifier()) {
+        std::string id = t->getText();
+        if (id == "while")
+            return expectWhile(l);
+        else if (id == "if")
+            return expectIf(l);
+        else if (id == "func")
+            return expectFuncDef(l);
+        else if (id == ";") {
             TokenPtr temp = l.read();
-            //return makeASTList();
             return makeNullStmnt(temp->getLineNumber());
         }
-
-        ASTreePtr expr = expectExpr(l);
-        TokenPtr end = l.read();
-        if (!end->isIdentifier() || end->getText() != ";")
-            throw SandException("Missing end specifier in expression", end);
-
-        //expr->optimize();
-        return expr;
     }
+
+    ASTreePtr res;
+    if (t->isIdentifier() && t->getText() == "return")
+        res = expectReturn(l);
+    else
+        res = expectExpr(l);
+
+    TokenPtr end = l.read();
+    if (!end->isIdentifier() || end->getText() != ";")
+        throw SandException("Missing end specifier in expression", end);
+
+    return res;
 }
 
 // @finished
@@ -91,6 +103,10 @@ ASTreePtr Parser::expectPrimary(Lexer& l) {
     else if (t->isIdentifier()) {
         if (reserved.find(t->getText()) != reserved.end())
             throw SandException("Can't use keywords as identifier", t);
+        TokenPtr temp = l.peek(1);
+        if (temp->isIdentifier() && temp->getText() == "(")
+            return expectFunc(l);
+
         return makeASTLeaf(l.read());
     }
     else
@@ -104,7 +120,6 @@ ASTreePtr Parser::expectExpr(Lexer& l) {
         throw SandException("Parsing end of file", t);
 
     // first primary
-    t = l.peek(0);
     if (t->isIdentifier() && t->getText() == ")")
         throw SandException("Null expression", t);
 
@@ -112,7 +127,7 @@ ASTreePtr Parser::expectExpr(Lexer& l) {
     t = l.peek(0);
     if (!t->isIdentifier() || operators.find(t->getText()) == operators.end())
         return t1;
-
+    
     ExprStmntPtr res;
 
     // op + primary
@@ -217,8 +232,8 @@ ASTreePtr Parser::expectBlock(Lexer& l) {
     if (!trb->isIdentifier() || trb->getText() != "}")
         throw SandException("Missing right bracket in block", trb);
 
-    if (res->numChildren() == 1)
-        return res->child(0);
+    //if (res->numChildren() == 1)
+    //    return res->child(0);
     return res;
 }
 
@@ -296,4 +311,89 @@ ASTreePtr Parser::expectWhile(Lexer& l) {
         wp->add(parse(l));
 
     return wp;
+}
+
+ASTreePtr Parser::expectFunc(Lexer& l)
+{
+    TokenPtr t = l.peek(0);
+    if (t->isEOF())
+        throw SandException("Parsing end of file", t);
+    
+    FuncStmntPtr f;
+    // function name
+    if (t->isIdentifier() && reserved.find(t->getText()) == reserved.end())
+        f = makeFuncStmnt(makeASTLeaf(l.read()));
+    else
+        throw SandException("Illegal function name", t);
+
+    // Left parenthesis
+    t = l.peek(0);
+    if (t->isIdentifier() && t->getText() == "(")
+        l.read();
+    else
+        throw SandException("Missing left parenthesis in function call", t);
+
+    // Test if no parameter
+    t = l.peek(0);
+    if (t->isIdentifier() && t->getText() == ")") {
+        l.read();
+        return f;
+    }
+
+    // Parameters
+    while (!t->isIdentifier() || t->getText() != ")") {
+        f->add(expectExpr(l));
+
+        t = l.peek(0);
+
+        if (t->isIdentifier() && t->getText() == ",") {
+            l.read();
+            t = l.peek(0);
+        }
+        else if (t->isIdentifier() && t->getText() == ")") {
+            l.read();
+            return f;
+        }
+        else
+            throw SandException("Illegal parameter in function call", t);
+    }
+
+    return f;
+}
+
+ASTreePtr Parser::expectFuncDef(Lexer& l)
+{
+    TokenPtr t = l.peek(0);
+    if (t->isEOF())
+        throw SandException("Parsing end of file", t);
+    
+    // check "func" specifier
+    if (t->isIdentifier() && t->getText() == "func")
+        l.read();
+    else
+        throw SandException("Illegal function definition", t);
+
+    // function name
+    FuncDefStmntPtr f = makeFuncDefStmnt(expectFunc(l));
+    
+    // function body
+    f->add(expectBlock(l));
+
+    return f;
+}
+
+ASTreePtr Parser::expectReturn(Lexer& l)
+{
+    TokenPtr t = l.peek(0);
+    if (t->isEOF())
+        throw SandException("Parsing end of file", t);
+
+    ReturnStmntPtr ret = makeReturnStmnt();
+    if (t->isIdentifier() && t->getText() == "return") {
+        l.read();
+        ret->add(expectExpr(l));
+        return ret;
+    }
+    else
+        throw SandException("Improper return statement", t);
 }

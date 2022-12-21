@@ -21,6 +21,9 @@ public:
     ASTreePtr expectBlock(Lexer& l);
     ASTreePtr expectIf(Lexer& l);
     ASTreePtr expectWhile(Lexer& l);
+    ASTreePtr expectFunc(Lexer& l);
+    ASTreePtr expectFuncDef(Lexer& l);
+    ASTreePtr expectReturn(Lexer& l);
 
     class Precedence {
     public:
