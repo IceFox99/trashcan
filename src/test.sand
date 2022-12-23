@@ -4,12 +4,18 @@ func sum(i) {
     else
         return i + sum(i - 1);
 }
-j = sum(5000);
+j = sum(500);
 j;
-k = 10000;
+k = 40000;
 sum = 0;
 while (k > 0) {
     sum = sum + k;
     k = k - 1;
 }
 sum;
+
+func sum() {
+    return 1000;
+}
+k = sum();
+"k is " + k;
