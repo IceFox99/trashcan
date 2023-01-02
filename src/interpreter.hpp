@@ -19,12 +19,13 @@ private:
     bool isTrue(ASTreePtr c);
 
     VarStack vars; // Variables for global namespace
-    std::unordered_map<std::string, VarStack> funcVars; // Variables for function namespace
+    std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<int, BasePtr>>> funcVars; // Variables for function namespace
     VarStack retVars; // Variables for function return value
     FuncStack funcs; // Function block statement for each function
 
-    bool isGlobal = true; // namespace flag
+    unsigned depth = 0; // namespace flag
     std::string currFuncName;
+    bool isReturned = false;
 };
 
 #endif

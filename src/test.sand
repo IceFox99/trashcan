@@ -18,4 +18,19 @@ func sum() {
     return 1000;
 }
 k = sum();
+"-------------Let's try function redefinition-------------";
 "k is " + k;
+"";
+
+func hanoi(n, a, b, c) {
+    if (n == 1)
+        a + "---->" + c;
+    else {
+        hanoi(n - 1, a, c, b);
+        hanoi(1, a, b, c);
+        hanoi(n - 1, b, a, c);
+    }
+}
+
+"-------------Let's play hanoi tower with 4-------------";
+hanoi(4, "A", "B", "C");

@@ -54,15 +54,15 @@ void Interpreter::inter(ASTreePtr p)
         std::cout << p->toString() << std::endl;
     }
     else if (code == VAR) {
-        if (isGlobal) {
+        if (!depth) {
             if (vars.find(p->toString()) != vars.end()) {
                 std::cout << vars.at(p->toString())->toString() << std::endl;
                 return;
             }
         }
         else {
-            if (funcVars[currFuncName].find(p->toString()) != vars.end()) {
-                std::cout << funcVars[currFuncName].at(p->toString())->toString() << std::endl;
+            if (funcVars[currFuncName].find(p->toString()) != funcVars[currFuncName].end()) {
+                std::cout << funcVars[currFuncName][p->toString()][depth]->toString() << std::endl;
                 return;
             }
         }
@@ -74,10 +74,10 @@ void Interpreter::inter(ASTreePtr p)
     else if (code == ASSIGN) {
         AssignStmntPtr asp = std::static_pointer_cast<AssignStmnt>(p);
         if (asp->value()->getCode() != ASSIGN) {
-            if (isGlobal)
+            if (!depth)
                 vars[asp->var()->toString()] = eval(asp); // Push this variable to stack
             else
-                funcVars[currFuncName][asp->var()->toString()] = eval(asp);
+                funcVars[currFuncName][asp->var()->toString()][depth] = eval(asp);
         }
         else { // nested definition, e.g. i=j=k=z=x=c=...
             ASTreePtr temp = p;
@@ -88,13 +88,13 @@ void Interpreter::inter(ASTreePtr p)
                 temp = tempAss->value();
             }
             BasePtr res = eval(temp);
-            if (isGlobal) {
+            if (!depth) {
                 for (const std::string& v : varVec)
                     vars[v] = res;
             }
             else {
                 for (const std::string& v : varVec)
-                    funcVars[currFuncName][v] = res;
+                    funcVars[currFuncName][v][depth] = res;
             }
         }
     }
@@ -104,8 +104,11 @@ void Interpreter::inter(ASTreePtr p)
         if (isTrue(c)) {
             ASTreePtr th = isp->thenBlock();
             if (th->getCode() == BLOCK) {
-                for (int i = 0; i != th->numChildren(); ++i)
+                for (int i = 0; i != th->numChildren(); ++i) {
                     inter(th->child(i));
+                    if (isReturned)
+                        break;
+                }
             }
             else
                 inter(th);
@@ -114,8 +117,11 @@ void Interpreter::inter(ASTreePtr p)
             if (isp->numChildren() > 2) {
                 ASTreePtr el = isp->elseBlock();
                 if (el->getCode() == BLOCK) {
-                    for (int i = 0; i != el->numChildren(); ++i)
+                    for (int i = 0; i != el->numChildren(); ++i) {
                         inter(el->child(i));
+                        if (isReturned)
+                            break;
+                    }
                 }
                 else
                     inter(el);
@@ -128,8 +134,11 @@ void Interpreter::inter(ASTreePtr p)
         ASTreePtr b = wsp->body();
         while (isTrue(c)) {
             if (b->getCode() == BLOCK) {
-                for (int i = 0; i != b->numChildren(); ++i)
+                for (int i = 0; i != b->numChildren(); ++i) {
                     inter(b->child(i));
+                    if (isReturned)
+                        break;
+                }
             }
             else
                 inter(b);
@@ -146,16 +155,17 @@ void Interpreter::inter(ASTreePtr p)
         // Clear previous definition if any
         CLEANFUNC(funcName);
 
-        for (int i = 1; i != fsp->numChildren(); ++i)
-            funcVars[funcName][fsp->child(i)->toString()] = nullptr;
+        //for (int i = 1; i != fsp->numChildren(); ++i)
+        //    funcVars[funcName][fsp->child(i)->toString()][0] = nullptr;
         funcs[funcName] = fdsp;
     }
     else if (code == RETURN) {
-        if (isGlobal) {
+        if (!depth)
             throw SandException("Illegal return statement in global namespace at " + p->location());
-        }
+
         ReturnStmntPtr rsp = std::static_pointer_cast<ReturnStmnt>(p);
         retVars[currFuncName] = eval(rsp->ret());
+        isReturned = true;
     }
 }
 
@@ -175,13 +185,13 @@ BasePtr Interpreter::eval(ASTreePtr t)
         return bp;
     }
     else if (code == VAR) {
-        if (isGlobal) {
+        if (!depth) {
             if (vars.find(t->toString()) != vars.end())
                 return vars.at(t->toString()); 
         }
         else {
             if (funcVars[currFuncName].find(t->toString()) != funcVars[currFuncName].end())
-                return funcVars[currFuncName].at(t->toString());
+                return funcVars[currFuncName][t->toString()].at(depth);
         }
         throw SandException("Undefined variable at " + t->location());
     }
@@ -254,8 +264,8 @@ BasePtr Interpreter::eval(ASTreePtr t)
         }
     }
     else if (code == FUNC) {
-        //isGlobal = false;
         FuncStmntPtr fsp = std::static_pointer_cast<FuncStmnt>(t);
+        std::string lastFuncName = currFuncName;
         currFuncName = fsp->getFuncName();
         if (funcs.find(currFuncName) == funcs.end())
             throw SandException("Undefined function at " + t->location());
@@ -266,45 +276,61 @@ BasePtr Interpreter::eval(ASTreePtr t)
         // function variable initialization
         if (fdsp->parameters()->numChildren() != fsp->numChildren())
             throw SandException("Incorrect number of function parameter at " + t->location());
+
+        // function temporary backup
+        std::vector<BasePtr> varBackup;
         for (int i = 1; i != fsp->numChildren(); ++i) {
             ASTreePtr parameter = fsp->child(i);
             if (parameter->getCode() == VAR) {
-                if (isGlobal)
-                    funcVars[currFuncName][fdsp->parameters()->child(i)->toString()] = vars[fsp->child(i)->toString()];
+                if (!depth)
+                    varBackup.push_back(vars[fsp->child(i)->toString()]);
                 else
-                    funcVars[currFuncName][fdsp->parameters()->child(i)->toString()] = funcVars[currFuncName][fsp->child(i)->toString()];
+                    varBackup.push_back(funcVars[currFuncName][fsp->child(i)->toString()][depth]);
             }
             else if (parameter->getCode() == LIT) {
                 ASTLeafPtr l = std::static_pointer_cast<ASTLeaf>(parameter);
                 TokenPtr tp = l->token();
                 BasePtr bp;
                 GETBASEPTR(tp, bp);
-                funcVars[currFuncName][fdsp->parameters()->child(i)->toString()] = bp;
+                varBackup.push_back(bp);
             }
-            else if (parameter->getCode() == EXPR)
-                funcVars[currFuncName][fdsp->parameters()->child(i)->toString()] = eval(parameter);
+            else if (parameter->getCode() == EXPR || parameter->getCode() == FUNC) {
+                varBackup.push_back(eval(parameter));
+            }
             else
                 throw SandException("Invalid function parameter at " + parameter->location());
         }
 
-        isGlobal = false;
+        ++depth;
+
+        // Copy back
+        for (int j = 1; j != fsp->numChildren(); ++j)
+            funcVars[currFuncName][fdsp->parameters()->child(j)->toString()][depth] = varBackup.at(j - 1);
+
+        varBackup.clear();
 
         // Function body
-        ASTreePtr temp;
         for (int i = 0; i != bsp->numChildren(); ++i) {
-            temp = bsp->child(i);
-            inter(temp);
-            if (temp->getCode() == RETURN)
+            inter(bsp->child(i));
+            if (isReturned)
                 break;
         }
 
         // copy back to global variable
-        for (int i = 1; i != fsp->numChildren(); ++i)
-            vars[fsp->child(i)->toString()] = funcVars[currFuncName][fdsp->parameters()->child(i)->toString()];
+        for (int i = 1; i != fsp->numChildren(); ++i) {
+            if (fsp->child(i)->getCode() == VAR) {
+                if (depth == 1)
+                    vars[fsp->child(i)->toString()] = funcVars[currFuncName][fdsp->parameters()->child(i)->toString()][depth];
+                else
+                    funcVars[lastFuncName][fsp->child(i)->toString()][depth - 1] = funcVars[currFuncName][fdsp->parameters()->child(i)->toString()][depth];
+            }
+        }
 
-        isGlobal = true;
-        if (retVars.find(currFuncName) != retVars.end())
-            return retVars[currFuncName];
+        --depth;
+        currFuncName = lastFuncName;
+        isReturned = false;
+        if (retVars.find(fsp->getFuncName()) != retVars.end())
+            return retVars[fsp->getFuncName()];
         else
             return nullptr;
     }
