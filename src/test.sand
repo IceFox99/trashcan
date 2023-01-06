@@ -5,26 +5,26 @@ func sum(i) {
         return i + sum(i - 1);
 }
 j = sum(500);
-j;
+j + "\n";
 k = 40000;
 sum = 0;
 while (k > 0) {
     sum = sum + k;
     k = k - 1;
 }
-sum;
+sum + "\n";
 
 func sum() {
     return 1000;
 }
 k = sum();
-"-------------Let's try function redefinition-------------";
-"k is " + k;
-"";
+"-------------Let's try function redefinition-------------\n";
+"k is " + k + "\n";
+"\n";
 
 func hanoi(n, a, b, c) {
     if (n == 1)
-        a + "---->" + c;
+        a + "---->" + c + "\n";
     else {
         hanoi(n - 1, a, c, b);
         hanoi(1, a, b, c);
@@ -32,5 +32,39 @@ func hanoi(n, a, b, c) {
     }
 }
 
-"-------------Let's play hanoi tower with 4-------------";
+"-------------Let's play hanoi tower with 4-------------\n";
 hanoi(4, "A", "B", "C");
+
+func add10(x) {
+    x = x + 10;
+}
+
+func f1(x, y) {
+    add10(x);
+    add10(y);
+    x + "\n";y + "\n";
+    x + y + "\n";
+}
+
+func f2(x, y) {
+    f1(x, y);
+}
+
+func f3(a, b) {
+    :f1(a, b);
+}
+
+i = 100;
+"-----------f2\n";
+f2(i, 10); // print 110, 20, 130
+"-----------f3\n";
+f3(i, 10); // print 120, 20, 140
+
+func f1(x, y) {
+    x - y + "\n";
+}
+
+"-----------f2\n";
+f2(i, 10); // print 110
+"-----------f3\n";
+f3(i, 10); // print 130, 20, 150

@@ -8,8 +8,6 @@
 
 class ExprStmnt : public ASTList {
 public:
-    //ExprStmnt();
-    //ExprStmnt(ASTreePtrVec c);
     ASTreePtr left() const;
     ASTreePtr op() const;
     ASTreePtr right() const;

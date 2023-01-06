@@ -6,6 +6,7 @@
 #include "ast/assign_stmnt.hpp"
 #include "ast/expr_stmnt.hpp"
 #include "ast/funcdef_stmnt.hpp"
+#include "ast/block_stmnt.hpp"
 #include <unordered_map>
 
 #define VarStack std::unordered_map<std::string, BasePtr>
@@ -17,6 +18,8 @@ public:
 private:
     BasePtr eval(ASTreePtr t);
     bool isTrue(ASTreePtr c);
+    ASTreePtr inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr p);
+    void inlStat(BlockStmntPtr bsp, int* b_index, FuncStmntPtr fsp, FuncDefStmntPtr fdsp, int fd_index, bool keepRet);
 
     VarStack vars; // Variables for global namespace
     std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<int, BasePtr>>> funcVars; // Variables for function namespace

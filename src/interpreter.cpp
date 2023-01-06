@@ -51,25 +51,25 @@ void Interpreter::inter(ASTreePtr p)
 {
     int code = p->getCode();
     if (code == LIT) {
-        std::cout << p->toString() << std::endl;
+        std::cout << p->toString();
     }
     else if (code == VAR) {
         if (!depth) {
             if (vars.find(p->toString()) != vars.end()) {
-                std::cout << vars.at(p->toString())->toString() << std::endl;
+                std::cout << vars.at(p->toString())->toString();
                 return;
             }
         }
         else {
             if (funcVars[currFuncName].find(p->toString()) != funcVars[currFuncName].end()) {
-                std::cout << funcVars[currFuncName][p->toString()][depth]->toString() << std::endl;
+                std::cout << funcVars[currFuncName][p->toString()][depth]->toString();
                 return;
             }
         }
         throw SandException("Undefined variable at " + p->location());
     }
     else if (code == EXPR) {
-        std::cout << eval(p)->toString() << std::endl;
+        std::cout << eval(p)->toString();
     }
     else if (code == ASSIGN) {
         AssignStmntPtr asp = std::static_pointer_cast<AssignStmnt>(p);
@@ -147,16 +147,39 @@ void Interpreter::inter(ASTreePtr p)
     else if (code == FUNC) {
         eval(p);
     }
+    else if (code == INFUNC) {
+        throw SandException("Illegal colon operator at " + p->location() + ", it should only exists in function definition");
+    }
     else if (code == FUNCDEF) {
         FuncDefStmntPtr fdsp = std::static_pointer_cast<FuncDefStmnt>(p);
         FuncStmntPtr fsp = std::static_pointer_cast<FuncStmnt>(fdsp->parameters());
+        BlockStmntPtr bsp = std::static_pointer_cast<BlockStmnt>(fdsp->func());
         std::string funcName = fsp->getFuncName();
         
         // Clear previous definition if any
         CLEANFUNC(funcName);
 
-        //for (int i = 1; i != fsp->numChildren(); ++i)
-        //    funcVars[funcName][fsp->child(i)->toString()][0] = nullptr;
+        // Inline the function
+        ASTreePtr temp;
+        for (int i = 0; i != bsp->numChildren(); ++i) {
+            temp = bsp->child(i);
+            if (temp->getCode() == INFUNC) {
+                InFuncStmntPtr ifsp = std::static_pointer_cast<InFuncStmnt>(temp);
+                if (funcs.find(ifsp->getFuncName()) == funcs.end())
+                    throw SandException("Illegal colon operator at " + p->location() + ", undefined function");
+
+                FuncDefStmntPtr in_fdsp = funcs[ifsp->getFuncName()]; // function to be inlined
+                if (in_fdsp->parameters()->numChildren() != ifsp->numChildren())
+                    throw SandException("Incorrect number of function parameter at " + p->location());
+
+                for (int j = 0; j != in_fdsp->func()->numChildren(); ++j)
+                    inlStat(bsp, &i, ifsp, in_fdsp, j, false);
+
+                bsp->children.erase(bsp->children.begin() + i); // delete the inlined statement
+                --i;
+            }
+        }
+
         funcs[funcName] = fdsp;
     }
     else if (code == RETURN) {
@@ -169,6 +192,97 @@ void Interpreter::inter(ASTreePtr p)
     }
 }
 
+ASTreePtr Interpreter::inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr p) {
+    if (p->getCode() == LIT) {
+        return p;
+    }
+    else if (p->getCode() == VAR) {
+        FuncStmntPtr ori_fsp = std::static_pointer_cast<FuncStmnt>(fdsp->parameters());
+        for (int i = 1; i != ori_fsp->numChildren(); ++i) {
+            if (p->toString() == ori_fsp->child(i)->toString()) {
+                return fsp->child(i);
+            }
+        }
+
+        TokenPtr ori_tp = std::static_pointer_cast<ASTLeaf>(p)->token();
+        TokenPtr tp = makeIdToken(ori_tp->getLineNumber(), "__F" + ori_fsp->getFuncName() +
+                "_" + ori_tp->getText());
+        ASTLeafPtr lp = makeASTLeaf(tp);
+        return lp;
+    }
+    else if (p->getCode() == EXPR) {
+        ExprStmntPtr esp = std::static_pointer_cast<ExprStmnt>(p);
+        ExprStmntPtr new_esp = makeExprStmnt();
+        new_esp->add(inlPrim(fsp, fdsp, esp->left()));
+        new_esp->add(esp->op());
+        new_esp->add(inlPrim(fsp, fdsp, esp->right()));
+        return new_esp;
+    }
+    else if (p->getCode() == ASSIGN) {
+        AssignStmntPtr asp = std::static_pointer_cast<AssignStmnt>(p);
+        AssignStmntPtr new_asp = makeAssignStmnt();
+        new_asp->add(inlPrim(fsp, fdsp, asp->var()));
+        new_asp->add(inlPrim(fsp, fdsp, asp->value()));
+        return new_asp;
+    }
+    else if (p->getCode() == IFSTMNT) {
+        IfStmntPtr isp = std::static_pointer_cast<IfStmnt>(p);
+        IfStmntPtr new_isp = makeIfStmnt();
+        new_isp->add(inlPrim(fsp, fdsp, isp->condition()));
+        BlockStmntPtr then_bsp = makeBlockStmnt();
+        for (int i = 0; i != isp->thenBlock()->numChildren(); ++i)
+            then_bsp->add(inlPrim(fsp, fdsp, isp->thenBlock()->child(i)));
+        new_isp->add(then_bsp);
+
+        BlockStmntPtr else_bsp;
+        if (isp->numChildren() > 2) {
+            else_bsp = makeBlockStmnt();
+            for (int j = 0; j != isp->elseBlock()->numChildren(); ++j)
+                else_bsp->add(inlPrim(fsp, fdsp, isp->elseBlock()->child(j)));
+            new_isp->add(else_bsp);
+        }
+        return new_isp;
+    }
+    else if (p->getCode() == WHILESTMNT) {
+        WhileStmntPtr wsp = std::static_pointer_cast<WhileStmnt>(p);
+        WhileStmntPtr new_wsp = makeWhileStmnt();
+        new_wsp->add(inlPrim(fsp, fdsp, wsp->condition()));
+        BlockStmntPtr while_bsp = makeBlockStmnt();
+        for (int i = 0; i != wsp->body()->numChildren(); ++i)
+            while_bsp->add(inlPrim(fsp, fdsp, wsp->body()->child(i)));
+        new_wsp->add(while_bsp);
+        return new_wsp;
+    }
+    else if (p->getCode() == FUNC) {
+        FuncStmntPtr old_fsp = std::static_pointer_cast<FuncStmnt>(p);
+        FuncStmntPtr new_fsp = makeFuncStmnt();
+        new_fsp->add(old_fsp->child(0));
+        for (int i = 1; i != old_fsp->numChildren(); ++i)
+            new_fsp->add(inlPrim(fsp, fdsp, old_fsp->child(i)));
+        return new_fsp;
+    }
+    else if (p->getCode() == RETURN) {
+        ReturnStmntPtr rsp = std::static_pointer_cast<ReturnStmnt>(p);
+        ReturnStmntPtr new_rsp = makeReturnStmnt();
+        new_rsp->add(inlPrim(fsp, fdsp, rsp->ret()));
+        return new_rsp;
+    }
+    else
+        throw SandException("Illegal statement for colon operator at " + p->location());
+}
+
+// Inline the statement, replace the corresponding variable name
+// bsp stands for the outer function's block statement
+// fsp stands for function statment (with new variable name) 
+// fdsp stands for the function definition of the function to be inlined
+void Interpreter::inlStat(BlockStmntPtr bsp, int* b_index, FuncStmntPtr fsp, FuncDefStmntPtr fdsp, int fd_index, bool keepRet) {
+    FuncStmntPtr ori_fsp = std::static_pointer_cast<FuncStmnt>(fdsp->parameters());
+    ASTreePtr st = std::static_pointer_cast<BlockStmnt>(fdsp->func())->child(fd_index);
+    if (st->getCode() == RETURN && !keepRet)
+        return;
+
+    bsp->children.insert(bsp->children.begin() + (*b_index)++, inlPrim(fsp, fdsp, st));
+}
 bool Interpreter::isTrue(ASTreePtr c) {
     BasePtr bp = eval(c);
     JUDGEBP(bp);
@@ -285,7 +399,8 @@ BasePtr Interpreter::eval(ASTreePtr t)
                 if (!depth)
                     varBackup.push_back(vars[fsp->child(i)->toString()]);
                 else
-                    varBackup.push_back(funcVars[currFuncName][fsp->child(i)->toString()][depth]);
+                    varBackup.push_back(funcVars[lastFuncName][fsp->child(i)->toString()][depth]);
+                    //varBackup.push_back(funcVars[currFuncName][fsp->child(i)->toString()][depth]);
             }
             else if (parameter->getCode() == LIT) {
                 ASTLeafPtr l = std::static_pointer_cast<ASTLeaf>(parameter);

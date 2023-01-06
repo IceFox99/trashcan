@@ -11,7 +11,8 @@
 #define BLOCK 6
 #define FUNCDEF 7
 #define FUNC 8
-#define RETURN 9
+#define INFUNC 9
+#define RETURN 10
 
 #define INT "int"
 #define STR "string"

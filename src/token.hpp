@@ -49,6 +49,7 @@ public:
     IdToken(int line, const std::string& id);
     bool isIdentifier() const override;
     std::string getText() const override;
+    void setText(const std::string& str);
 private:
     std::string text;
 };

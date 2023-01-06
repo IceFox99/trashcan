@@ -10,6 +10,7 @@
 class FuncDefStmnt : public ASTList {
 public:
     // child(0) is FuncStmnt, child(1) is BlockStmnt
+    FuncDefStmnt() = default;
     FuncDefStmnt(ASTreePtr f);
     ASTreePtr parameters() const;
     ASTreePtr func() const;

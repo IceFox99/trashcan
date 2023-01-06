@@ -83,6 +83,11 @@ std::string IdToken::getText() const
     return text;
 }
 
+void IdToken::setText(const std::string& str)
+{
+    text = str;
+}
+
 StrToken::StrToken(int line, const std::string& str) :
     Token(line)
 {

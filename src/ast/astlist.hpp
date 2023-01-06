@@ -7,6 +7,7 @@
 //#define makeASTList(i) std::make_shared<ASTList>(i)
 
 class ASTList : public ASTree {
+friend class Interpreter;
 public:
     ASTList();
     //ASTList(ASTreePtr t);
@@ -17,8 +18,6 @@ public:
     int numChildren() const override;
     std::string location() const override;
     virtual std::string toString() const override;
-    //virtual int getCode() const override;
-    //void optimize() override;
 protected:
     ASTreePtrVec children; 
 };

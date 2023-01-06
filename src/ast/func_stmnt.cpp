@@ -31,3 +31,16 @@ int FuncStmnt::getCode() const
 {
     return FUNC;
 }
+
+InFuncStmnt::InFuncStmnt(FuncStmntPtr p) :
+    FuncStmnt(*p) {}
+
+int InFuncStmnt::getCode() const
+{
+    return INFUNC;
+}
+
+std::string InFuncStmnt::toString() const
+{
+    return ":" + FuncStmnt::toString();
+}

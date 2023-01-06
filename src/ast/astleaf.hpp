@@ -8,6 +8,7 @@
 #define makeASTLeaf(t) std::make_shared<ASTLeaf>(t)
 
 class ASTLeaf : public ASTree {
+friend class Interpreter;
 public:
      ASTLeaf(TokenPtr t);
      ASTreePtr child(int i) const override;

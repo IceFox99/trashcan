@@ -18,12 +18,12 @@
  * primary: "(" expr ")" | func | NUMBER | IDENTIFIER | STRING
  * expr: primary { OP primary }
  * func: IDENTIFIER "(" { expr "," } [ expr ] ")"
- * func_def: "func" IDENTIFIER "(" { IDENTIFIER "," } [ IDENTIFIER ] ")" block
+ * func_def: "func" IDENTIFIER ( "(" { IDENTIFIER "," } [ IDENTIFIER ] ")" block | "=" IDENTIFIER { OP IDENTIFIER } )
  * return: "return" expr
  * block: "{" { statement } "}"
  * statement: "if" "(" expr ")" ( block | statement ) [ "else" ( block | statement ) ]  
  *          | "while" "(" expr ")" ( block | statement )
- *          | ( expr | return ) ";" | func_def
+ *          | ( expr | return ) ";" | func_def | ":" func ";"
  */
 
 const std::unordered_set<std::string> Parser::reserved { ",", ";", "{", "}", Token::SEOL, \
@@ -67,6 +67,10 @@ ASTreePtr Parser::parse(Lexer& l) {
     ASTreePtr res;
     if (t->isIdentifier() && t->getText() == "return")
         res = expectReturn(l);
+    else if (t->isIdentifier() && t->getText() == ":") {
+        l.read();
+        res = makeInFuncStmnt(std::static_pointer_cast<FuncStmnt>(expectFunc(l)));
+    }
     else
         res = expectExpr(l);
 
