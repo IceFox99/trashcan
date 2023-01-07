@@ -13,6 +13,7 @@
 #define FUNC 8
 #define INFUNC 9
 #define RETURN 10
+#define BREAK 11
 
 #define INT "int"
 #define STR "string"

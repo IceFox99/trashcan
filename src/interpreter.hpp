@@ -29,6 +29,9 @@ private:
     unsigned depth = 0; // namespace flag
     std::string currFuncName;
     bool isReturned = false;
+
+    bool isWhile = false;
+    bool isBroke = false;
 };
 
 #endif

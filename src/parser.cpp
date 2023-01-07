@@ -10,12 +10,13 @@
 #include "ast/return_stmnt.hpp"
 #include "ast/funcdef_stmnt.hpp"
 #include "ast/func_stmnt.hpp"
+#include "ast/break_stmnt.hpp"
 
 /**
  * This is the EBNF of the grammar, parse function will
  * return a statement each time.
  *
- * primary: "(" expr ")" | func | NUMBER | IDENTIFIER | STRING
+ * primary: "(" expr ")" | [ ":" ] func | NUMBER | IDENTIFIER | STRING
  * expr: primary { OP primary }
  * func: IDENTIFIER "(" { expr "," } [ expr ] ")"
  * func_def: "func" IDENTIFIER ( "(" { IDENTIFIER "," } [ IDENTIFIER ] ")" block | "=" IDENTIFIER { OP IDENTIFIER } )
@@ -23,11 +24,11 @@
  * block: "{" { statement } "}"
  * statement: "if" "(" expr ")" ( block | statement ) [ "else" ( block | statement ) ]  
  *          | "while" "(" expr ")" ( block | statement )
- *          | ( expr | return ) ";" | func_def | ":" func ";"
+ *          | ( expr | return | "break" ) ";" | func_def | ":" func ";"
  */
 
 const std::unordered_set<std::string> Parser::reserved { ",", ";", "{", "}", Token::SEOL, \
-        "if", "else", "while", "func", "return" };
+        "if", "else", "while", "func", "return", "break" };
 const std::unordered_map<std::string, Parser::Precedence> Parser::operators { \
     std::make_pair("=", Precedence(1, false)), \
     std::make_pair("==", Precedence(2, true)), \
@@ -62,6 +63,12 @@ ASTreePtr Parser::parse(Lexer& l) {
             TokenPtr temp = l.read();
             return makeNullStmnt(temp->getLineNumber());
         }
+        else if (id == "break") {
+            TokenPtr temp = l.read();
+            BreakStmntPtr br = makeBreakStmnt(temp->getLineNumber());
+            readSemi(l);
+            return br;
+        }
     }
 
     ASTreePtr res;
@@ -74,11 +81,14 @@ ASTreePtr Parser::parse(Lexer& l) {
     else
         res = expectExpr(l);
 
-    TokenPtr end = l.read();
-    if (!end->isIdentifier() || end->getText() != ";")
-        throw SandException("Missing end specifier in expression", end);
-
+    readSemi(l);
     return res;
+}
+
+void Parser::readSemi(Lexer& l) {
+    TokenPtr semi = l.read();
+    if (!semi->isIdentifier() || semi->getText() != ";")
+        throw SandException("Missing end specifier in expression", semi);
 }
 
 // @finished

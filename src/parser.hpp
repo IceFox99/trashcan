@@ -24,6 +24,7 @@ public:
     ASTreePtr expectFunc(Lexer& l);
     ASTreePtr expectFuncDef(Lexer& l);
     ASTreePtr expectReturn(Lexer& l);
+    void readSemi(Lexer& l);
 
     class Precedence {
     public:

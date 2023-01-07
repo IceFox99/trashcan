@@ -20,7 +20,6 @@ func sum() {
 k = sum();
 "-------------Let's try function redefinition-------------\n";
 "k is " + k + "\n";
-"\n";
 
 func hanoi(n, a, b, c) {
     if (n == 1)
@@ -44,6 +43,8 @@ func f1(x, y) {
     add10(y);
     x + "\n";y + "\n";
     x + y + "\n";
+    z = 10;
+    return x + y;
 }
 
 func f2(x, y) {
@@ -68,3 +69,13 @@ func f1(x, y) {
 f2(i, 10); // print 110
 "-----------f3\n";
 f3(i, 10); // print 130, 20, 150
+
+"-----------test break statement in while loop\n";
+i = 100;
+while (true) {
+    if (i == 50)
+        break;
+
+    i + "\n";
+    i = i - 10;
+}

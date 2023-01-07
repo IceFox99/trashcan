@@ -106,7 +106,7 @@ void Interpreter::inter(ASTreePtr p)
             if (th->getCode() == BLOCK) {
                 for (int i = 0; i != th->numChildren(); ++i) {
                     inter(th->child(i));
-                    if (isReturned)
+                    if (isReturned || isBroke)
                         break;
                 }
             }
@@ -119,7 +119,7 @@ void Interpreter::inter(ASTreePtr p)
                 if (el->getCode() == BLOCK) {
                     for (int i = 0; i != el->numChildren(); ++i) {
                         inter(el->child(i));
-                        if (isReturned)
+                        if (isReturned || isBroke)
                             break;
                     }
                 }
@@ -129,6 +129,7 @@ void Interpreter::inter(ASTreePtr p)
         }
     }
     else if (code == WHILESTMNT) {
+        isWhile = true;
         WhileStmntPtr wsp = std::static_pointer_cast<WhileStmnt>(p);
         ASTreePtr c = wsp->condition();
         ASTreePtr b = wsp->body();
@@ -136,13 +137,17 @@ void Interpreter::inter(ASTreePtr p)
             if (b->getCode() == BLOCK) {
                 for (int i = 0; i != b->numChildren(); ++i) {
                     inter(b->child(i));
-                    if (isReturned)
+                    if (isReturned || isBroke)
                         break;
                 }
+                if (isBroke)
+                    break;
             }
             else
                 inter(b);
         }
+        isBroke = false;
+        isWhile = false;
     }
     else if (code == FUNC) {
         eval(p);
@@ -190,6 +195,14 @@ void Interpreter::inter(ASTreePtr p)
         retVars[currFuncName] = eval(rsp->ret());
         isReturned = true;
     }
+    else if (code == BREAK) {
+        if (!isWhile)
+            throw SandException("Illegal break statment outside of while loop at " + p->location());
+        
+        isBroke = true;
+    }
+    else
+        throw SandException("Illegal statement at " + p->location());
 }
 
 ASTreePtr Interpreter::inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr p) {
