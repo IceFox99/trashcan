@@ -8,7 +8,6 @@
 
 class WhileStmnt : public ASTList {
 public:
-    //WhileStmnt(ASTreePtrVec c);
     ASTreePtr condition() const;
     ASTreePtr body() const;
     std::string toString() const override;

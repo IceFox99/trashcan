@@ -1,4 +1,5 @@
 #include "lexer.hpp"
+#include <iostream>
 
 // const std::regex Lexer::spRegex("\\s*");
 // const std::regex Lexer::numRegex("[0-9]+");
@@ -53,6 +54,7 @@ void Lexer::readLine()
 
     int pos = 0;
     int endPos = line.length();
+    const std::regex empRegex("\\s*");
     while (pos < endPos) {
         std::smatch m;
         std::string current = line.substr(pos);
@@ -60,7 +62,9 @@ void Lexer::readLine()
             addToken(m);
             pos += m.length();
         }
-        else
+        else if (std::regex_search(current, m, empRegex))
+            break;
+        else 
             throw SandException("bad token at line " + std::to_string(lineNumber));
     }
     //tokenVec.push_back(makeIdTokenPtr(lineNumber, Token::SEOL)); The EOL should be omiteed

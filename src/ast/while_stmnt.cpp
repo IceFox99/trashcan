@@ -16,8 +16,8 @@ ASTreePtr WhileStmnt::body() const
 
 std::string WhileStmnt::toString() const
 {
-    return "(while " + condition()->toString() + " (" 
-           + body()->toString() + "))";
+    return "(while " + condition()->toString() + " " 
+           + body()->toString() + ")";
 }
 
 int WhileStmnt::getCode() const

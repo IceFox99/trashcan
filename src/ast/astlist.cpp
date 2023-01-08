@@ -3,17 +3,11 @@
 
 ASTList::ASTList() = default;
 
-//ASTList::ASTList(ASTreePtr t)
-//{
-//    add(t);
-//}
-
 ASTList::ASTList(ASTreePtrVec vec) :
     children(vec) {}
 
 void ASTList::add(ASTreePtr t)
 {
-    //children.push_back(std::static_pointer_cast<ASTree>(t));
     children.push_back(t);
 }
 
@@ -35,11 +29,11 @@ int ASTList::numChildren() const
 std::string ASTList::location() const
 {
     for (auto p : children) {
-        std::string str = p->location();
-        if (!str.empty())
-            return str;
+        std::string lo = p->location();
+        if (!lo.empty())
+            return lo;
     }
-    return std::string();
+    return "";
 }
 
 std::string ASTList::toString() const
@@ -54,11 +48,6 @@ std::string ASTList::toString() const
     str += ")";
     return str;
 }
-
-//int ASTList::getCode() const
-//{
-//    throw SandException("Unknown statement at " + location());
-//}
 
 //void ASTList::optimize()
 //{

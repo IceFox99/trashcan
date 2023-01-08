@@ -8,7 +8,6 @@
 
 class IfStmnt : public ASTList {
 public:
-    //IfStmnt(ASTreePtrVec c);
     ASTreePtr condition() const;
     ASTreePtr thenBlock() const;
     ASTreePtr elseBlock() const;

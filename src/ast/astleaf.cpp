@@ -17,7 +17,7 @@ int ASTLeaf::numChildren() const
 
 std::string ASTLeaf::location() const
 {
-    return "line " + std::to_string(t->getLineNumber());
+    return std::to_string(t->getLineNumber());
 }
 
 std::string ASTLeaf::toString() const

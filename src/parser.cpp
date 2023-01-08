@@ -19,7 +19,8 @@
  * primary: "(" expr ")" | [ ":" ] func | NUMBER | IDENTIFIER | STRING
  * expr: primary { OP primary }
  * func: IDENTIFIER "(" { expr "," } [ expr ] ")"
- * func_def: "func" IDENTIFIER ( "(" { IDENTIFIER "," } [ IDENTIFIER ] ")" block | "=" IDENTIFIER { OP IDENTIFIER } )
+ * func_def: "func" IDENTIFIER ( "(" { IDENTIFIER "," } [ IDENTIFIER ] ")" block | "=" IDENTIFIER { OP IDENTIFIER } 
+ *          | "=" IDENTIFIER { OP IDENTIFIER } )
  * return: "return" expr
  * block: "{" { statement } "}"
  * statement: "if" "(" expr ")" ( block | statement ) [ "else" ( block | statement ) ]  
@@ -74,12 +75,12 @@ ASTreePtr Parser::parse(Lexer& l) {
     ASTreePtr res;
     if (t->isIdentifier() && t->getText() == "return")
         res = expectReturn(l);
-    else if (t->isIdentifier() && t->getText() == ":") {
-        l.read();
-        res = makeInFuncStmnt(std::static_pointer_cast<FuncStmnt>(expectFunc(l)));
-    }
     else
         res = expectExpr(l);
+    //else if (t->isIdentifier() && t->getText() == ":") {
+    //    l.read();
+    //    res = makeInFuncStmnt(std::static_pointer_cast<FuncStmnt>(expectFunc(l)));
+    //}
 
     readSemi(l);
     return res;
@@ -121,6 +122,13 @@ ASTreePtr Parser::expectPrimary(Lexer& l) {
         if (temp->isIdentifier() && temp->getText() == "(")
             return expectFunc(l);
 
+        temp = l.peek(0);
+        if (temp->isIdentifier() && temp->getText() == ":") {
+            l.read();
+            FuncStmntPtr fsp = std::static_pointer_cast<FuncStmnt>(expectFunc(l));
+            return makeInFuncStmnt(fsp);
+        }
+
         return makeASTLeaf(l.read());
     }
     else
@@ -151,7 +159,7 @@ ASTreePtr Parser::expectExpr(Lexer& l) {
     if (lastOp == "=") {
         AssignStmntPtr ass = makeAssignStmnt();
         if (t1->toString() == "true" || t1->toString() == "false")
-            throw SandException("Can't use true or false as variable name at " + t1->location());
+            throw SandException("Can't use true or false as variable name at line " + t1->location());
         ass->add(t1);
         ass->add(expectExpr(l));
         return ass;
@@ -278,8 +286,11 @@ ASTreePtr Parser::expectIf(Lexer& l) {
     TokenPtr t1 = l.peek(0);
     if (t1->isIdentifier() && t1->getText() == "{")
         ip->add(expectBlock(l));
-    else
-        ip->add(parse(l));
+    else {
+        BlockStmntPtr bsp = makeBlockStmnt();
+        bsp->add(parse(l));
+        ip->add(bsp);
+    }
 
     // Optional else block
     TokenPtr opt = l.peek(0);
@@ -288,8 +299,11 @@ ASTreePtr Parser::expectIf(Lexer& l) {
         TokenPtr t2 = l.peek(0);
         if (t2->isIdentifier() && t2->getText() == "{")
             ip->add(expectBlock(l));
-        else
-            ip->add(parse(l));
+        else {
+            BlockStmntPtr bsp = makeBlockStmnt();
+            bsp->add(parse(l));
+            ip->add(bsp);
+        }
     }
 
     return ip;
@@ -321,8 +335,11 @@ ASTreePtr Parser::expectWhile(Lexer& l) {
     TokenPtr t = l.peek(0);
     if (t->isIdentifier() && t->getText() == "{")
         wp->add(expectBlock(l));
-    else
-        wp->add(parse(l));
+    else {
+        BlockStmntPtr bsp = makeBlockStmnt();
+        bsp->add(parse(l));
+        wp->add(bsp);
+    }
 
     return wp;
 }

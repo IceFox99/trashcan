@@ -18,8 +18,11 @@ public:
 private:
     BasePtr eval(ASTreePtr t);
     bool isTrue(ASTreePtr c);
-    ASTreePtr inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr p);
-    void inlStat(BlockStmntPtr bsp, int* b_index, FuncStmntPtr fsp, FuncDefStmntPtr fdsp, int fd_index, bool keepRet);
+    //ASTreePtr inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr p, bool useRet, bool* addBreak = nullptr);
+    ASTreePtr inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr p, bool useRet, BlockStmntPtr bsp);
+    void inlStat(BlockStmntPtr bsp, int* b_index, ASTreePtr p);
+    void inlStat(BlockStmntPtr bsp, int* b_index, ASTreePtr p, bool useRet, ASTreePtr other = nullptr, int other_index = 0);
+    //void inlStat(BlockStmntPtr bsp, int* b_index, FuncStmntPtr fsp, FuncDefStmntPtr fdsp, int fd_index, bool keepRet);
 
     VarStack vars; // Variables for global namespace
     std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<int, BasePtr>>> funcVars; // Variables for function namespace
@@ -30,8 +33,10 @@ private:
     std::string currFuncName;
     bool isReturned = false;
 
-    bool isWhile = false;
+    int isWhile = 0;
     bool isBroke = false;
+    
+    int counter = 0;
 };
 
 #endif
