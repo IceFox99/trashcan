@@ -7,7 +7,6 @@ This is a mini language called ***Sand*** with ll(1) parser and a simple interpr
 
 ```bash
 git clone https://github.com/IceFox99/Trashcan.git
-cd Trashcan/ && make
-cd bin
-./interpreter_runner
+cd Trashcan && git checkout Sand && make
+cd bin && ./interpreter_runner
 ```
