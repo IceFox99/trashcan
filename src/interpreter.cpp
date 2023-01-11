@@ -207,6 +207,9 @@ void Interpreter::inter(ASTreePtr p)
                 whileFlags[i - 1].second = true;
         }
     }
+    else if (code == NUL) {
+        return;
+    }
     else
         throw SandException("Illegal statement at line " + p->location());
 }

@@ -5,7 +5,7 @@
 #include <ctime>
 #include "sand.hpp"
 
-#define PREFIX std::cout << "<<< ";
+#define VERSION "1.0.1"
 
 int main(int argc, char* argv[]) 
 {
@@ -14,9 +14,9 @@ int main(int argc, char* argv[])
         auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::string timeStr = std::ctime(&t);
         timeStr.pop_back();
-        std::cout << "Sand 1.0.0 (" << timeStr << ")" << std::endl;
+        std::cout << "Sand " << VERSION << " (" << timeStr << ")" << std::endl;
         std::cout << "By IceFox99 (=^_^=), source code in https://github.com/IceFox99/Trashcan/tree/Sand" << std::endl;
-        std::cout << "Type \"q\" to quit this program." << std::endl;
+        std::cout << "Type \"q\" or Ctrl-D (i.e. EOF) to quit this program." << std::endl;
         std::cout << "<<< ";
         
         // Sand starts
@@ -27,14 +27,14 @@ int main(int argc, char* argv[])
                 return 0;
 
             if (temp.empty()) {
-                PREFIX;
+                std::cout << "<<< ";
                 continue;
             }
 
             if (temp.back() == '\\') {
                 temp.pop_back();
                 stmnt += temp;
-                PREFIX;
+                std::cout << "... ";
                 continue;
             }
 
@@ -54,8 +54,9 @@ int main(int argc, char* argv[])
             // Clean the stringstream and statement
             ss.str(std::string()); ss.clear();
             stmnt.clear();
-            PREFIX;
+            std::cout << "<<< ";
         }
+        std::cout << std::endl;
     }
     else {
         std::string fileName = argv[1];
