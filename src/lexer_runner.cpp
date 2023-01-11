@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::ifstream input("../src/test.sand");
+    std::ifstream input("../examples/test.sand");
 
     std::string temp;
     while (std::getline(input, temp)) {

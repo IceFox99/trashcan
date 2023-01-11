@@ -6,14 +6,7 @@
 
 int main()
 {
-    std::ifstream input("../src/test.sand");
-
-    //std::string temp;
-    //while (std::getline(input, temp)) 
-    //    std::cout << temp << std::endl;
-    //std::cout << std::endl;
-    //input.clear();
-    //input.seekg(0);
+    std::ifstream input("../examples/test.sand");
 
     Lexer l(input);
     Parser p;
