@@ -12,6 +12,11 @@ public:
     ASTreePtr body() const;
     std::string toString() const override;
     int getCode() const override;
+
+    void setLabel(const std::string& str);
+    std::string getLabel() const;
+private:
+    std::string label = "";
 };
 
 #endif

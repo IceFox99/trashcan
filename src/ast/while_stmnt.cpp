@@ -17,10 +17,21 @@ ASTreePtr WhileStmnt::body() const
 std::string WhileStmnt::toString() const
 {
     return "(while " + condition()->toString() + " " 
+           + (label.empty() ? "" : ": " + label + " ")
            + body()->toString() + ")";
 }
 
 int WhileStmnt::getCode() const
 {
     return WHILESTMNT;
+}
+
+void WhileStmnt::setLabel(const std::string& str)
+{
+    label = str;
+}
+
+std::string WhileStmnt::getLabel() const
+{
+    return label;
 }

@@ -66,7 +66,15 @@ ASTreePtr Parser::parse(Lexer& l) {
         }
         else if (id == "break") {
             TokenPtr temp = l.read();
-            BreakStmntPtr br = makeBreakStmnt(temp->getLineNumber());
+            BreakStmntPtr br = makeBreakStmnt(temp->getLineNumber(), "");
+            temp = l.peek(0);
+            if (temp->isIdentifier() && reserved.find(temp->getText()) == reserved.end()) {
+                br->setLabel(temp->getText());
+                l.read();
+            }
+            else if (!temp->isIdentifier())
+                throw SandException("Illegal label for break statement", temp);
+
             readSemi(l);
             return br;
         }
@@ -77,10 +85,6 @@ ASTreePtr Parser::parse(Lexer& l) {
         res = expectReturn(l);
     else
         res = expectExpr(l);
-    //else if (t->isIdentifier() && t->getText() == ":") {
-    //    l.read();
-    //    res = makeInFuncStmnt(std::static_pointer_cast<FuncStmnt>(expectFunc(l)));
-    //}
 
     readSemi(l);
     return res;
@@ -331,8 +335,20 @@ ASTreePtr Parser::expectWhile(Lexer& l) {
     if (!trp->isIdentifier() || trp->getText() != ")")
         throw SandException("Missing right parenthesis in while loop", trp);
 
-    // Block
+    // While block
     TokenPtr t = l.peek(0);
+    if (t->isIdentifier() && t->getText() == ":") {
+        l.read(); // read the colon
+        t = l.peek(0);
+        if (t->isIdentifier() && reserved.find(t->getText()) == reserved.end()) {
+            wp->setLabel(t->getText());
+            l.read(); // read the label
+        }
+        else
+            throw SandException("Illegal break label", t);
+    }
+
+    t = l.peek(0);
     if (t->isIdentifier() && t->getText() == "{")
         wp->add(expectBlock(l));
     else {

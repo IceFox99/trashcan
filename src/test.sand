@@ -94,3 +94,18 @@ func f1(x, y) {
 }
 
 f2(100, 1000);
+
+a = 10;
+while (true) : test0 {
+    while (a > 0) : test1 {
+        a;
+        a = a - 1;
+        while (true) {
+            if (a > 5)
+                break test1;
+            else
+                break test0;
+        }
+    }
+    "19991105";
+}

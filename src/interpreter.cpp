@@ -125,22 +125,29 @@ void Interpreter::inter(ASTreePtr p)
         }
     }
     else if (code == WHILESTMNT) {
-        ++isWhile;
-        isBroke = false;
+        //++isWhile;
+        //isBroke = false;
         WhileStmntPtr wsp = std::static_pointer_cast<WhileStmnt>(p);
+
+        std::string label = wsp->getLabel();
+        whileFlags.push_back(std::make_pair(label, false));
+
         ASTreePtr c = wsp->condition();
         ASTreePtr b = wsp->body();
         while (isTrue(c)) {
             for (int i = 0; i != b->numChildren(); ++i) {
                 inter(b->child(i));
-                if (isReturned || isBroke)
+                if (isReturned || whileFlags[whileFlags.size() - 1].second)
                     break;
+                //if (isReturned || isBroke)
+                //    break;
             }
-            if (isBroke)
+            if (whileFlags[whileFlags.size() - 1].second)
                 break;
         }
-        isBroke = false;
-        --isWhile;
+        //isBroke = false;
+        //--isWhile;
+        whileFlags.pop_back();
     }
     else if (code == FUNC) {
         eval(p);
@@ -175,10 +182,30 @@ void Interpreter::inter(ASTreePtr p)
         isReturned = true;
     }
     else if (code == BREAK) {
-        if (!isWhile)
+        //if (!isWhile)
+        //    throw SandException("Illegal break statment outside of while loop at line " + p->location());
+        if (whileFlags.empty())
             throw SandException("Illegal break statment outside of while loop at line " + p->location());
-        
-        isBroke = true;
+
+        BreakStmntPtr brsp = std::static_pointer_cast<BreakStmnt>(p);
+        if (brsp->getLabel().empty())
+            whileFlags[whileFlags.size() - 1].second = true;
+        else {
+            // check whether it's legal break statement
+            int index = -1;
+            for (int i = whileFlags.size(); i != 0; --i) {
+                if (whileFlags[i - 1].first == brsp->getLabel()) {
+                    index = i - 1;
+                    break;
+                }
+            }
+            if (index == -1)
+                throw SandException("Illegal break statement with wrong break label at line " + p->location());
+            
+            //isBroke = true;
+            for (int i = whileFlags.size(); i != index; --i)
+                whileFlags[i - 1].second = true;
+        }
     }
     else
         throw SandException("Illegal statement at line " + p->location());
@@ -208,6 +235,7 @@ void Interpreter::inlStat(BlockStmntPtr bsp, int* b_index, ASTreePtr p, bool use
         // implement a while statement
         WhileStmntPtr wsp = makeWhileStmnt();
         wsp->add(makeASTLeaf(makeIdToken(0, "true"))); // add the condition of while statement
+        wsp->setLabel("__F" + std::static_pointer_cast<FuncStmnt>(in_fdsp->parameters())->getFuncName() + "_flag");
         BlockStmntPtr new_bsp = makeBlockStmnt();
 
         ASTreePtr st;
@@ -215,7 +243,7 @@ void Interpreter::inlStat(BlockStmntPtr bsp, int* b_index, ASTreePtr p, bool use
             st = in_fdsp->func()->child(j);
             new_bsp->add(inlPrim(ifsp, in_fdsp, st, useRet, new_bsp));
         }
-        new_bsp->add(makeBreakStmnt(std::stoi(ifsp->location())));
+        new_bsp->add(makeBreakStmnt(std::stoi(ifsp->location()), "__F" + std::static_pointer_cast<FuncStmnt>(in_fdsp->parameters())->getFuncName() + "_flag"));
         wsp->add(new_bsp); // add the body of while statement
         bsp->children.insert(bsp->children.begin() + (*b_index)++, wsp);
 
@@ -253,8 +281,9 @@ ASTreePtr Interpreter::inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr
         }
 
         TokenPtr ori_tp = std::static_pointer_cast<ASTLeaf>(p)->token();
-        TokenPtr tp = makeIdToken(ori_tp->getLineNumber(), "__F" + ori_fsp->getFuncName() +
-                "_" + ori_tp->getText() + std::to_string(counter++));
+        //TokenPtr tp = makeIdToken(ori_tp->getLineNumber(), "__F" + ori_fsp->getFuncName() +
+        //        "_" + ori_tp->getText() + std::to_string(counter++));
+        TokenPtr tp = makeIdToken(ori_tp->getLineNumber(), "__F" + ori_fsp->getFuncName() + "_" + ori_tp->getText());
         ASTLeafPtr lp = makeASTLeaf(tp);
         return lp;
     }
@@ -314,18 +343,18 @@ ASTreePtr Interpreter::inlPrim(FuncStmntPtr fsp, FuncDefStmntPtr fdsp, ASTreePtr
         return new_fsp;
     }
     else if (p->getCode() == RETURN) {
+        FuncStmntPtr ori_fsp = std::static_pointer_cast<FuncStmnt>(fdsp->parameters());
         if (useRet) {
             ReturnStmntPtr rsp = std::static_pointer_cast<ReturnStmnt>(p);
             AssignStmntPtr asp = makeAssignStmnt();
 
-            FuncStmntPtr ori_fsp = std::static_pointer_cast<FuncStmnt>(fdsp->parameters());
             ASTLeafPtr lp = makeASTLeaf(makeIdToken(std::stoi(fsp->location()), "__F" + ori_fsp->getFuncName() + "_TEMP" + std::to_string(counter++)));
             asp->add(lp);
             asp->add(inlPrim(fsp, fdsp, rsp->ret(), useRet, bsp));
             bsp->add(asp);
         }
 
-        return makeBreakStmnt(std::stoi(fsp->location()));
+        return makeBreakStmnt(std::stoi(fsp->location()), "__F" + ori_fsp->getFuncName() + "_flag");
     }
     else
         throw SandException("Illegal statement for colon operator at line " + p->location());

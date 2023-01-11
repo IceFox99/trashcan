@@ -4,12 +4,17 @@
 #include "astleaf.hpp"
 
 #define BreakStmntPtr std::shared_ptr<BreakStmnt>
-#define makeBreakStmnt(i) std::make_shared<BreakStmnt>(i)
+#define makeBreakStmnt(i, l) std::make_shared<BreakStmnt>(i, l)
 
 class BreakStmnt : public ASTLeaf {
 public:
-    BreakStmnt(int line);
+    BreakStmnt(int line, const std::string& label = "");
     int getCode() const override;
+    void setLabel(const std::string& str);
+    std::string getLabel() const;
+    std::string toString() const override;
+private:
+    std::string label;
 };
 
 #endif

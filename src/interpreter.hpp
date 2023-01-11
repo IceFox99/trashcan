@@ -29,13 +29,17 @@ private:
     VarStack retVars; // Variables for function return value
     FuncStack funcs; // Function block statement for each function
 
+    // flags for function scope
     unsigned depth = 0; // namespace flag
     std::string currFuncName;
     bool isReturned = false;
 
+    // flags for while statement
+    std::vector<std::pair<std::string, bool>> whileFlags; // first is while label, second is break flag
     int isWhile = 0;
     bool isBroke = false;
     
+    // flag for naming temporary variables
     int counter = 0;
 };
 
