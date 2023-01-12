@@ -1,0 +1,13 @@
+func hanoi(n, a, b, c) {
+    if (n == 1)
+        a + "---->" + c;
+    else {
+        hanoi(n - 1, a, c, b);
+        hanoi(1, a, b, c);
+        hanoi(n - 1, b, a, c);
+    }
+}
+
+i = 4;
+"--------Start a hanoi tower game with number " + i + "--------"; 
+hanoi(i, "A", "B", "C");

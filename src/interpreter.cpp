@@ -109,8 +109,13 @@ void Interpreter::inter(ASTreePtr p)
             ASTreePtr th = isp->thenBlock();
             for (int i = 0; i != th->numChildren(); ++i) {
                 inter(th->child(i));
-                if (isReturned || isBroke)
+                if (isReturned)
                     break;
+
+                if (!whileFlags.empty()) {
+                    if (whileFlags[whileFlags.size() - 1].second)
+                        break;
+                }
             }
         }
         else {
@@ -118,15 +123,18 @@ void Interpreter::inter(ASTreePtr p)
                 ASTreePtr el = isp->elseBlock();
                 for (int i = 0; i != el->numChildren(); ++i) {
                     inter(el->child(i));
-                    if (isReturned || isBroke)
+                    if (isReturned)
                         break;
+
+                    if (!whileFlags.empty()) {
+                        if (whileFlags[whileFlags.size() - 1].second)
+                            break;
+                    }
                 }
             }
         }
     }
     else if (code == WHILESTMNT) {
-        //++isWhile;
-        //isBroke = false;
         WhileStmntPtr wsp = std::static_pointer_cast<WhileStmnt>(p);
 
         std::string label = wsp->getLabel();
@@ -139,14 +147,10 @@ void Interpreter::inter(ASTreePtr p)
                 inter(b->child(i));
                 if (isReturned || whileFlags[whileFlags.size() - 1].second)
                     break;
-                //if (isReturned || isBroke)
-                //    break;
             }
             if (whileFlags[whileFlags.size() - 1].second)
                 break;
         }
-        //isBroke = false;
-        //--isWhile;
         whileFlags.pop_back();
     }
     else if (code == FUNC) {
@@ -202,7 +206,6 @@ void Interpreter::inter(ASTreePtr p)
             if (index == -1)
                 throw SandException("Illegal break statement with wrong break label at line " + p->location());
             
-            //isBroke = true;
             for (int i = whileFlags.size(); i != index; --i)
                 whileFlags[i - 1].second = true;
         }

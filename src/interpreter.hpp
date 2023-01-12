@@ -35,9 +35,7 @@ private:
     bool isReturned = false;
 
     // flags for while statement
-    std::vector<std::pair<std::string, bool>> whileFlags; // first is while label, second is break flag
-    int isWhile = 0;
-    bool isBroke = false;
+    std::vector<std::pair<std::string, bool> > whileFlags; // first is while label, second is break flag
     
     // flag for naming temporary variables
     int counter = 0;
