@@ -148,7 +148,7 @@ void Interpreter::inter(ASTreePtr p)
                 if (isReturned || whileFlags[whileFlags.size() - 1].second)
                     break;
             }
-            if (whileFlags[whileFlags.size() - 1].second)
+            if (isReturned || whileFlags[whileFlags.size() - 1].second)
                 break;
         }
         whileFlags.pop_back();
