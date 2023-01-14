@@ -62,8 +62,8 @@ void Interpreter::inter(ASTreePtr p)
             }
         }
         else {
-            if (funcVars[currFuncName].find(p->toString()) != funcVars[currFuncName].end()) {
-                std::cout << funcVars[currFuncName][p->toString()][depth]->toString() << std::endl;
+            if (funcVars[currFuncName][depth].find(p->toString()) != funcVars[currFuncName][depth].end()) {
+                std::cout << funcVars[currFuncName][depth][p->toString()]->toString() << std::endl;
                 return;
             }
         }
@@ -81,7 +81,7 @@ void Interpreter::inter(ASTreePtr p)
             if (!depth)
                 vars[asp->var()->toString()] = eval(asp); // Push this variable to stack
             else
-                funcVars[currFuncName][asp->var()->toString()][depth] = eval(asp);
+                funcVars[currFuncName][depth][asp->var()->toString()] = eval(asp);
         }
         else { // nested definition, e.g. i=j=k=z=x=c=...
             ASTreePtr temp = p;
@@ -98,7 +98,7 @@ void Interpreter::inter(ASTreePtr p)
             }
             else {
                 for (const std::string& v : varVec)
-                    funcVars[currFuncName][v][depth] = res;
+                    funcVars[currFuncName][depth][v] = res;
             }
         }
     }
@@ -387,8 +387,8 @@ BasePtr Interpreter::eval(ASTreePtr t)
                 return vars.at(t->toString()); 
         }
         else {
-            if (funcVars[currFuncName].find(t->toString()) != funcVars[currFuncName].end())
-                return funcVars[currFuncName][t->toString()].at(depth);
+            if (funcVars[currFuncName][depth].find(t->toString()) != funcVars[currFuncName][depth].end())
+                return funcVars[currFuncName][depth][t->toString()];
         }
         throw SandException("Undefined variable at line " + t->location());
     }
@@ -479,8 +479,7 @@ BasePtr Interpreter::eval(ASTreePtr t)
                 if (!depth)
                     varBackup.push_back(vars[fsp->child(i)->toString()]);
                 else
-                    varBackup.push_back(funcVars[lastFuncName][fsp->child(i)->toString()][depth]);
-                    //varBackup.push_back(funcVars[currFuncName][fsp->child(i)->toString()][depth]);
+                    varBackup.push_back(funcVars[lastFuncName][depth][fsp->child(i)->toString()]);
             }
             else if (parameter->getCode() == LIT) {
                 ASTLeafPtr l = std::static_pointer_cast<ASTLeaf>(parameter);
@@ -500,7 +499,7 @@ BasePtr Interpreter::eval(ASTreePtr t)
 
         // Copy back
         for (int j = 1; j != fsp->numChildren(); ++j)
-            funcVars[currFuncName][fdsp->parameters()->child(j)->toString()][depth] = varBackup.at(j - 1);
+            funcVars[currFuncName][depth][fdsp->parameters()->child(j)->toString()] = varBackup.at(j - 1);
 
         varBackup.clear();
 
@@ -515,12 +514,13 @@ BasePtr Interpreter::eval(ASTreePtr t)
         for (int i = 1; i != fsp->numChildren(); ++i) {
             if (fsp->child(i)->getCode() == VAR) {
                 if (depth == 1)
-                    vars[fsp->child(i)->toString()] = funcVars[currFuncName][fdsp->parameters()->child(i)->toString()][depth];
+                    vars[fsp->child(i)->toString()] = funcVars[currFuncName][depth][fdsp->parameters()->child(i)->toString()];
                 else
-                    funcVars[lastFuncName][fsp->child(i)->toString()][depth - 1] = funcVars[currFuncName][fdsp->parameters()->child(i)->toString()][depth];
+                    funcVars[lastFuncName][depth - 1][fsp->child(i)->toString()] = funcVars[currFuncName][depth][fdsp->parameters()->child(i)->toString()];
             }
         }
 
+        funcVars[currFuncName].erase(depth);
         --depth;
         currFuncName = lastFuncName;
         isReturned = false;

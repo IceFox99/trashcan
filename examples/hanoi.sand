@@ -8,6 +8,6 @@ func hanoi(n, a, b, c) {
     }
 }
 
-i = 4;
+i = 6;
 "--------Start a hanoi tower game with number " + i + "--------"; 
 hanoi(i, "A", "B", "C");
