@@ -6,7 +6,7 @@
 // const std::regex Lexer::idRegex("[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\\|\\||[:punct:]");
 // const std::regex Lexer::strRegex("\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\"");
 // const std::regex Lexer::commentRegex("//.*");
-const std::regex Lexer::allRegex("\\s*((//.*)|(-?[0-9]+)|(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")|[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\\|\\||[[:punct:]])");
+const std::regex Lexer::allRegex("\\s*((//.*)|(-?[0-9]+)|(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")|[A-Z_a-z][A-Z_a-z0-9]*|==|!=|<=|>=|&&|\\|\\||[[:punct:]])");
 
 Lexer::Lexer(std::istream& inputStream) :
     is(inputStream), hasMore(true), lineNumber(0) {}

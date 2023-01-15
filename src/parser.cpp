@@ -33,6 +33,7 @@ const std::unordered_set<std::string> Parser::reserved { ",", ";", "{", "}", Tok
 const std::unordered_map<std::string, Parser::Precedence> Parser::operators { \
     std::make_pair("=", Precedence(1, false)), \
     std::make_pair("==", Precedence(2, true)), \
+    std::make_pair("!=", Precedence(2, true)), \
     std::make_pair(">", Precedence(2, true)), \
     std::make_pair("<", Precedence(2, true)), \
     std::make_pair("<=", Precedence(2, true)), \

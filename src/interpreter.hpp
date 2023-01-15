@@ -25,7 +25,6 @@ private:
     //void inlStat(BlockStmntPtr bsp, int* b_index, FuncStmntPtr fsp, FuncDefStmntPtr fdsp, int fd_index, bool keepRet);
 
     VarStack vars; // Variables for global namespace
-    //std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<int, BasePtr>>> funcVars; // Variables for function namespace
     std::unordered_map<std::string, std::unordered_map<int, std::unordered_map<std::string, BasePtr>>> funcVars; // Variables for function namespace
     VarStack retVars; // Variables for function return value
     FuncStack funcs; // Function block statement for each function

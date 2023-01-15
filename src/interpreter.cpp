@@ -441,6 +441,9 @@ BasePtr Interpreter::eval(ASTreePtr t)
             else if (oper == "==")
                 return makeBool(std::static_pointer_cast<Int>(l)->getInt()
                         == std::static_pointer_cast<Int>(r)->getInt());
+            else if (oper == "!=")
+                return makeBool(std::static_pointer_cast<Int>(l)->getInt()
+                        != std::static_pointer_cast<Int>(r)->getInt());
             else if (oper == "<")
                 return makeBool(std::static_pointer_cast<Int>(l)->getInt()
                         < std::static_pointer_cast<Int>(r)->getInt());
