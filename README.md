@@ -10,3 +10,4 @@ Unimportant stuff, like small projects, solutions of exercises, notebooks, etc. 
 - [D2RChar](../../tree/D2RChar): 暗黑2重置版常见人物练法、加点、装备一览。
 - [MyConfig](../../tree/MyConfig): My configuration files of SpaceVim, bash, tmux, etc.
 - [Kernel](../../tree/Kernel): Simple practices from [The Linux Kernel Module Programming Guide](https://sysprog21.github.io/lkmpg/).
+- [Nqueens](../../tree/Nqueens): N-queens problem in MiniZinc model and QUBO model.
