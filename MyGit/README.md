@@ -61,3 +61,4 @@ Some commonly used git commands and solutions.
 - [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 - [How to check real git diff before merging from remote branch](https://stackoverflow.com/questions/4944376/how-to-check-real-git-diff-before-merging-from-remote-branch)
 - [How to push an existing project to Github](https://www.digitalocean.com/community/tutorials/how-to-push-an-existing-project-to-github)
+- [Delete untracked files in git](https://stackoverflow.com/questions/4327708/git-reset-hard-head-leaves-untracked-files-behind)
