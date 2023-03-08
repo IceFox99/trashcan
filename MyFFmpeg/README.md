@@ -6,7 +6,14 @@ Some FFmpeg commands and solutions.
 
 | Command | Description |
 | :--- | :--- |
-| ffmpeg -i \<input_file\> -f srt -i \<srt_file\> -c:v copy -c:a copy -c:s mov_text \<output_file\> | Embed SRT file into mp4 with ffmpeg |
 | ffmpeg -ss \<begin_time\> -to \<end_time\> -i \<input_file\> -c:v copy -c:a copy \<output_file\> | Cut the video or audio from specified begin time to end time |
 | ffmpeg -i INPUT1 -i INPUT2 -i INPUT3 -filter_complex amix=inputs=3:duration=first OUTPUT | mix 3 input audio streams to a single output with the same duration as the first input |
-| ffmpeg -i \<input_video\> -vn -acodec copy \<output_audio\> | Extract the audio stream without re-encoding |
+| ffmpeg -i \<input_video\> -vn -c:a copy \<output_audio\> | Extract the audio stream without re-encoding |
+| ffmpeg -i \<input_video\> -an -c copy \<output_video\> | Remove audio from video |
+
+## Solutions
+
+- [Use ffmpeg to add text subtitles](https://stackoverflow.com/questions/8672809/use-ffmpeg-to-add-text-subtitles)
+- [Extract audio from video with ffmpeg](https://stackoverflow.com/questions/9913032/how-can-i-extract-audio-from-video-with-ffmpeg)
+- [Add a new audio into a video using ffmpeg](https://stackoverflow.com/questions/11779490/how-to-add-a-new-audio-not-mixing-into-a-video-using-ffmpeg)
+- [Loss of quality while adding subtitle via ffmpeg](https://video.stackexchange.com/questions/17548/loss-of-quality-while-adding-subtitle-via-ffmpeg)
