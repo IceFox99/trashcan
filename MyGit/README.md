@@ -42,6 +42,9 @@ Some commonly used git commands and solutions.
 | `git difftool --cached --dir-diff` | Show staged changes (do show new files) |
 | `git difftool HEAD~ --dir-diff` | Compare the difference between HEAD~ and HEAD |
 | `git difftool` \<branch_1\>`..`\<branch_2\> `--dir-diff` | Compare two branches in git |
+| `git format-patch` \<commit_sha1\> | Prepare patch for a single commit |
+| `git format-patch` \<first_sha1\>`^..`\<last_sha1\> `--stdout >` \<patch_name\> | Prepare a single patch for multiple commits |
+| `git am` \<patch_name\> | Apply patches |
 
 ## Solutions
 
