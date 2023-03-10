@@ -126,9 +126,9 @@ export LESS_TERMCAP_so=$(printf '\e[01;33m') # enter standout mode - yellow
 export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;36m') # enter underline mode - cyan
 
-# Jump to windows 10 filesystem quickly
-alias study='cd /mnt/d/Study'
-
 # vcxsrv connection
 export DISPLAY=$(ip route list default | awk '{print $3}'):0
 export LIBGL_ALWAYS_INDIRECT=1
+
+# checked-clang
+# export PATH=/home/icefox99/checkedc-clang/install/bin:$PATH
