@@ -56,6 +56,9 @@ name = 'git'
 [[layers]]
 name = 'lang#c'
 
+[[layers]]
+name = 'lang#assembly'
+
 [[custom_plugins]]
 repo = 'jiangmiao/auto-pairs'
 merged = false

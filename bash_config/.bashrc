@@ -130,5 +130,5 @@ export LESS_TERMCAP_us=$(printf '\e[04;36m') # enter underline mode - cyan
 export DISPLAY=$(ip route list default | awk '{print $3}'):0
 export LIBGL_ALWAYS_INDIRECT=1
 
-# checked-clang
-# export PATH=/home/icefox99/checkedc-clang/install/bin:$PATH
+# explorer alias
+alias explorer="explorer.exe ."
