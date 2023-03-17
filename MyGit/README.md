@@ -27,6 +27,7 @@ Some commonly used git commands and solutions.
 | `git branch` | Check all the branches |
 | `git branch` \<branch_name\> | Create a branch with a name |
 | `git branch -a` | List both remote-tracking branches and local branches |
+| `git branch -m` \<new_branch_name\> | Rename the current branch |
 | `git checkout` \<branch_name\> | Switch to that branch |
 | `git branch --set-upstream-to` \<remote_name\>`/`\<remote_branch_name\> | Set the branch's upstream (you can use -u instead of --set-upstream-to) |
 | `git branch -vv` | Find out which remote branch a local branch is tracking |
