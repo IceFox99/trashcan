@@ -16,6 +16,7 @@ Some commonly used git commands and solutions.
 | `git add .` | Stages new files and modifications, without deletions |
 | `git add -u` | Stages modifications and deletions, without new files |
 | `git commit -m` “message” | Commit the changed files with annotation |
+| `git commit --amend -m` "message" | Modify the most recent commit with new information |
 | `git push` | Push the commit to the default remote repository |
 | `git push --set-upstream` \<remote_name\> \<branch_name\> | Push the commit to the selected repository and set this remote and branch as the unique upstream (you can use -u instead of --set-upstream) |
 | `git pull` | Pull the files from the remote repository |
