@@ -1,4 +1,4 @@
-cp ~/.bashrc -t ./bash_config/ -v
-cp ~/.tmux.conf -t ./bash_config/ -v
-cp ~/.SpaceVim.d/init.toml -t ./spacevim_config/ -v
-cp ~/.SpaceVim/init.vim -t ./spacevim_config/ -v
+cp ~/.bashrc -t ./bash/ -v
+cp ~/.tmux.conf -t ./tmux/ -v
+cp ~/.config/nvim/init.vim -t ./neovim/ -v
+cp ~/.config/ranger/rc.conf -t ./ranger/ -v
