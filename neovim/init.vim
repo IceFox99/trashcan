@@ -34,7 +34,11 @@ let g:NERDTreeShowHidden = 1
 let g:NERDTreeWinPos = "left"
 
 " colorscheme
-colorscheme tokyonight-night
+colorscheme gruvbox
+highlight Normal guibg=none
+highlight NonText guibg=none
+highlight Normal ctermbg=none
+highlight NonText ctermbg=none
 
 " line number
 set number
