@@ -6,7 +6,6 @@
 " 	 1.5) If you're on WSL2, you have to modify
 " 	 	  ~/.config/nvim/coc-settings.json, set 
 "		  \"clangd.path":"your/path/to/clangd"
-" 2) 
 
 call plug#begin('~/.config/nvim/plugged')
 Plug 'preservim/nerdtree'
@@ -21,27 +20,28 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ryanoasis/vim-devicons'
 Plug 'karb94/neoscroll.nvim'
 Plug 'mhinz/vim-startify', {'branch': 'center'}
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 call plug#end()
 
 " <leader> key
 let g:mapleader=" "
 
 " NERDTree
-nnoremap <silent> <C-j> :NERDTreeToggle<CR>
+nnoremap <silent> <C-j> :NERDTreeFocus<CR>
 let g:NERDTreeMinimalUI = 1
 let g:NERDTreeWinSize = 20
 let g:NERDTreeShowHidden = 1
 let g:NERDTreeWinPos = "left"
 
 " colorscheme
-colorscheme gruvbox
-set background=dark
+colorscheme tokyonight-night
 
 " line number
 set number
 
 " FZF
 let $FZF_DEFAULT_COMMAND = "find -L ~ -not -path \"*.cache*\""
+let $FZF_DEFAULT_OPTS = '--preview "less {}"'
 nnoremap <silent> <leader>f :FZF<CR>
 
 " switch .cpp and .h
