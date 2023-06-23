@@ -41,7 +41,7 @@ highlight Normal ctermbg=none
 highlight NonText ctermbg=none
 
 " line number
-set number
+set number relativenumber
 
 " FZF
 let $FZF_DEFAULT_COMMAND = "find -L ~ -not -path \"*.cache*\""
