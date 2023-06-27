@@ -1,7 +1,7 @@
 " Before loading this init.vim, you have to first install vim-plugin
 " After install these plugins, you have to:
 " 0) Install nerdfonts and select one
-" 1) Install npm and clangd on your machine, 
+" 1) Install npm, yarn and clangd on your machine, 
 " 	 then CocInstall coc-tsserver && CocInstall clangd
 " 	 1.5) If you're on WSL2, you have to modify
 " 	 	  ~/.config/nvim/coc-settings.json, set 
@@ -21,6 +21,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'karb94/neoscroll.nvim'
 Plug 'mhinz/vim-startify', {'branch': 'center'}
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 call plug#end()
 
 " <leader> key
@@ -47,6 +48,9 @@ set number relativenumber
 let $FZF_DEFAULT_COMMAND = "find -L ~ -not -path \"*.cache*\""
 let $FZF_DEFAULT_OPTS = '--preview "less {}"'
 nnoremap <silent> <leader>f :FZF<CR>
+
+" markdown-preview.nvim
+nnoremap <silent> <C-s> <Plug>MarkdownPreview
 
 " switch .cpp and .h
 nnoremap <silent> <leader>o :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
