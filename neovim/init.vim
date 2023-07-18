@@ -22,38 +22,78 @@ Plug 'karb94/neoscroll.nvim'
 Plug 'mhinz/vim-startify', {'branch': 'center'}
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+Plug 'francoiscabrol/ranger.vim'
+Plug 'rbgrouleff/bclose.vim'
+"Plug 'mikewest/vimroom'
 call plug#end()
 
 " <leader> key
 let g:mapleader=" "
 
+" ranger.nvim
+let g:ranger_map_keys = 0
+nnoremap <silent> <C-j> :Ranger<CR>
+
 " NERDTree
-nnoremap <silent> <C-j> :NERDTreeFocus<CR>
+"nnoremap <silent> <C-j> :NERDTreeFocus<CR>
 let g:NERDTreeMinimalUI = 1
-let g:NERDTreeWinSize = 20
+let g:NERDTreeWinSize = 30
 let g:NERDTreeShowHidden = 1
 let g:NERDTreeWinPos = "left"
 
 " colorscheme
 colorscheme gruvbox
-highlight Normal guibg=none
-highlight NonText guibg=none
-highlight Normal ctermbg=none
-highlight NonText ctermbg=none
+highlight Normal guibg=none ctermbg=none
+highlight NonText guibg=none ctermbg=none
+highlight VertSplit guibg=none ctermbg=none 
+
+" vim split bar
+set fillchars+=vert:\ 
+
+" hide vim mode
+set noshowmode
+
+" tab settings
+highlight TabLineFill guibg=none ctermbg=none
+
+" hide statusline and commandline in neovim
+set cmdheight=0
 
 " line number
+nnoremap <C-l> 80\|
 set number relativenumber
+
+" colorcolumn
+set colorcolumn=81
+highlight ColorColumn ctermbg=235
+
+" set cursor always at center
+set scrolloff=999
+
+" hide the tilde symbol for empty
+set fillchars+=eob:\ 
 
 " FZF
 let $FZF_DEFAULT_COMMAND = "find -L ~ -not -path \"*.cache*\""
 let $FZF_DEFAULT_OPTS = '--preview "less {}"'
 nnoremap <silent> <leader>f :FZF<CR>
 
+" ctags
+set tags=./tags,tags;$HOME
+set tags+=./TAGS,TAGS;$HOME
+set tags+=$HOME/gcc/TAGS
+
 " markdown-preview.nvim
 nnoremap <silent> <C-s> <Plug>MarkdownPreview
 
 " switch .cpp and .h
 nnoremap <silent> <leader>o :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+
+" tab shortcuts
+nnoremap <silent> <A-,> :tabprevious<CR>
+nnoremap <silent> <A-.> :tabnext<CR>
+nnoremap <silent> <C-n> :tabnew<CR>
+nnoremap <silent> <C-m> :tabclose<CR>
 
 " indent size
 set tabstop=4
@@ -66,18 +106,29 @@ set nowrap
 let g:airline#extensions#ions#tabline#enabled = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline_powerline_fonts = 1
-let g:airline_theme="minimalist"
+let g:airline_theme = "minimalist"
+"let g:airline_extensions = []
+set laststatus=3
 
 " coc.nvim
 inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 inoremap <expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
 inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
+highlight SignColumn guibg=none ctermbg=none
 
 " neoscroll.nvim
 lua require('neoscroll').setup()
 
 " vim-startify
-let g:startify_center = 40
+"let g:startify_center = 40
+
+" vimroom
+"let g:vimroom_width = 86
+"let g:vimroom_navigation_keys = 0
+"let g:vimroom_clear_line_numbers = 0
+"let g:vimroom_sidebar_height = 0
+"nnoremap <silent> <Leader>mz <Plug>VimroomToggle
+"autocmd VimEnter * VimroomToggle
 
 " WSL yank support, COMMENT them if not on WSL!!
 let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
@@ -87,3 +138,15 @@ if executable(s:clip)
         autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
     augroup END
 endif
+
+" empty left pane
+function! BuildEmptyPane()
+	silent leftabove 45 vsplit new
+	setlocal noma
+	setlocal nocursorline
+	setlocal nonumber
+	silent! setlocal norelativenumber
+	wincmd l
+endfunction
+autocmd VimEnter * call BuildEmptyPane()
+autocmd TabNew * call BuildEmptyPane()

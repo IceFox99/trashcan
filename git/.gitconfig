@@ -1,0 +1,45 @@
+[credential "https://github.com"]
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !/usr/bin/gh auth git-credential
+[diff]
+    tool = meld
+    # tool = vimdiff
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld \"$(wslpath -aw $LOCAL)\" \"$(wslpath -aw $REMOTE)\"
+[merge]
+    tool = meld
+    # tool = vimdiff
+[mergetool "meld"]
+    cmd = meld --auto-merge \"$(wslpath -aw $LOCAL)\" \"$(wslpath -aw $BASE)\" \"$(wslpath -aw $REMOTE)\" --output \"$(wslpath -aw $MERGED)\" --label=Local --label=Base --label=Remote --diff \"$(wslpath -aw $BASE)\" \"$(wslpath -aw $LOCAL)\" --diff \"$(wslpath -aw $BASE)\" \"$(wslpath -aw $REMOTE)\"
+[user]
+	email = huyuefeng99@gmail.com
+	name = IceFox99
+[alias]
+    dt = difftool --dir-diff --no-symlinks
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	pager = diff-so-fancy | less --tabs=4 -RFX
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[color]
+	ui = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = 11
+	frag = magenta bold
+	func = 146 bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
