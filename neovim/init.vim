@@ -70,7 +70,7 @@ set number relativenumber
 
 " colorcolumn
 "set colorcolumn=81
-"highlight ColorColumn ctermbg=235
+highlight ColorColumn ctermbg=235
 
 " set cursor always at center
 set scrolloff=999
@@ -105,7 +105,7 @@ set tabstop=4
 set shiftwidth=4
 
 " wrap word
-set wrap
+set wrap linebreak
 
 " vim-airline
 let g:airline#extensions#ions#tabline#enabled = 1
