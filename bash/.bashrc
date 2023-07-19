@@ -141,3 +141,4 @@ export NVM_DIR="$HOME/.nvm"
 # default editor
 export VISUAL=nvim;
 export EDITOR=nvim;
+. "$HOME/.cargo/env"

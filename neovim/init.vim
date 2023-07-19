@@ -50,6 +50,7 @@ highlight Normal guibg=none ctermbg=none
 highlight NonText guibg=none ctermbg=none
 highlight VertSplit guibg=none ctermbg=none 
 highlight MsgSeparator guibg=none ctermbg=none
+highlight StatusLine cterm=none ctermbg=none
 
 " vim split bar
 set fillchars+=vert:\ 
@@ -68,8 +69,8 @@ nnoremap <C-l> 80\|
 set number relativenumber
 
 " colorcolumn
-set colorcolumn=81
-highlight ColorColumn ctermbg=235
+"set colorcolumn=81
+"highlight ColorColumn ctermbg=235
 
 " set cursor always at center
 set scrolloff=999
@@ -104,7 +105,7 @@ set tabstop=4
 set shiftwidth=4
 
 " wrap word
-set nowrap
+set wrap
 
 " vim-airline
 let g:airline#extensions#ions#tabline#enabled = 1
