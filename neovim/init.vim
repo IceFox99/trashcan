@@ -71,6 +71,8 @@ set number relativenumber
 " colorcolumn
 "set colorcolumn=81
 highlight ColorColumn ctermbg=235
+autocmd FileType c,cpp,javascript call matchadd('ColorColumn', '\%81v.', 100)
+autocmd FileType c,cpp,javascript call matchadd('ColorColumn', '\%81v.', 100)
 
 " set cursor always at center
 set scrolloff=999
@@ -148,4 +150,4 @@ function! BuildEmptyPane()
 endfunction
 autocmd VimEnter * call BuildEmptyPane()
 autocmd TabNew * call BuildEmptyPane()
-nnoremap <silent> <F5> :only \| call BuildEmptyPane()<CR>
+nnoremap <silent> <F5> :vsplit \| :only \| call BuildEmptyPane()<CR>
