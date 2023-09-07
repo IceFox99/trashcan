@@ -70,9 +70,8 @@ set number relativenumber
 
 " colorcolumn
 "set colorcolumn=81
-highlight ColorColumn ctermbg=235
-autocmd FileType c,cpp,javascript call matchadd('ColorColumn', '\%81v.', 100)
-autocmd FileType c,cpp,javascript call matchadd('ColorColumn', '\%81v.', 100)
+highlight ColorColumn ctermbg=240
+autocmd FileType c,cpp,javascript call matchadd('ColorColumn', '\%81v', 100)
 
 " set cursor always at center
 set scrolloff=999
@@ -94,7 +93,7 @@ set tags+=$HOME/gcc/TAGS
 nnoremap <silent> <C-s> <Plug>MarkdownPreview
 
 " switch .cpp and .h
-nnoremap <silent> <leader>o :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+nnoremap <silent> <A-o> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 
 " tab shortcuts
 nnoremap <silent> <A-,> :tabprevious<CR>
@@ -107,7 +106,7 @@ set tabstop=4
 set shiftwidth=4
 
 " wrap word
-set wrap linebreak
+set nowrap linebreak
 
 " vim-airline
 let g:airline#extensions#ions#tabline#enabled = 1
@@ -151,3 +150,4 @@ endfunction
 autocmd VimEnter * call BuildEmptyPane()
 autocmd TabNew * call BuildEmptyPane()
 nnoremap <silent> <F5> :vsplit \| :only \| call BuildEmptyPane()<CR>
+nnoremap <silent> <F6> :vsplit \| :only<CR>
