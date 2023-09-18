@@ -117,11 +117,14 @@ export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;36m') # enter underline mode - cyan
 
 # vcxsrv connection
-export DISPLAY=$(ip route list default | awk '{print $3}'):0
-export LIBGL_ALWAYS_INDIRECT=1
+#export DISPLAY=$(ip route list default | awk '{print $3}'):0
+#export LIBGL_ALWAYS_INDIRECT=1
 
 # explorer alias
-alias explorer="explorer.exe ."
+alias open="explorer.exe ."
+
+# shutdown wsl2 alias
+alias shut="wsl.exe --shutdown"
 
 # nvm
 export NVM_DIR="$HOME/.nvm"

@@ -80,7 +80,7 @@ set scrolloff=999
 set fillchars+=eob:\ 
 
 " FZF
-let $FZF_DEFAULT_COMMAND = "find -L ~ -not -path \"*.cache*\""
+let $FZF_DEFAULT_COMMAND = "find -L / -not -path \"*.cache*\" -not -path \"\/mnt*\""
 let $FZF_DEFAULT_OPTS = '--color=gutter:-1 --preview "less {}"' 
 nnoremap <silent> <leader>f :FZF<CR>
 
@@ -139,8 +139,9 @@ if executable(s:clip)
 endif
 
 " empty left pane
+let g:empty_pane_width = 45
 function! BuildEmptyPane()
-	silent leftabove 45 vsplit new
+	execute "silent leftabove " . g:empty_pane_width . " vsplit new"
 	setlocal noma
 	setlocal nocursorline
 	setlocal nonumber
@@ -149,5 +150,5 @@ function! BuildEmptyPane()
 endfunction
 autocmd VimEnter * call BuildEmptyPane()
 autocmd TabNew * call BuildEmptyPane()
-nnoremap <silent> <F5> :vsplit \| :only \| call BuildEmptyPane()<CR>
-nnoremap <silent> <F6> :vsplit \| :only<CR>
+nnoremap <silent> <F5> :vsplit \| :wincmd p \| :only \| call BuildEmptyPane()<CR>
+nnoremap <silent> <F6> :vsplit \| :wincmd p \| :only<CR>
