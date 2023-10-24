@@ -10,6 +10,7 @@ Some FFmpeg commands and solutions.
 | ffmpeg -i \<INPUT1\> -i \<INPUT2\> -i \<INPUT3\> -filter_complex amix=inputs=3 \<OUTPUT\> | mix 3 input audio streams (any number) to a single output with the shortest duration in the inputs |
 | ffmpeg -i \<input_video\> -vn -c:a copy \<output_audio\> | Extract the audio stream without re-encoding |
 | ffmpeg -i \<input_video\> -an -c copy \<output_video\> | Remove audio from video |
+| ffmpeg -i \<mkv_video\> -i \<ass_sub\> -map 0 -map 1 -c copy \<output_mkv\> | Merge ass subtitles into mkv video |
 
 ## Solutions
 
