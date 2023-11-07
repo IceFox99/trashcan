@@ -116,15 +116,17 @@ export LESS_TERMCAP_so=$(printf '\e[01;33m') # enter standout mode - yellow
 export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;36m') # enter underline mode - cyan
 
-# vcxsrv connection
-#export DISPLAY=$(ip route list default | awk '{print $3}'):0
-#export LIBGL_ALWAYS_INDIRECT=1
-
 # explorer alias
 alias open="explorer.exe ."
 
 # shutdown wsl2 alias
 alias shut="wsl.exe --shutdown"
+
+# ranger alias
+alias a=". ranger"
+
+# chatgpt alias
+alias gpt="chatgpt --multi-line-prompt"
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
@@ -149,3 +151,5 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export OPENAI_KEY=<OPENAI_KEY>
+export PATH=$PATH:/usr/local/bin

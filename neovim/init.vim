@@ -25,6 +25,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 Plug 'francoiscabrol/ranger.vim'
 Plug 'rbgrouleff/bclose.vim'
 Plug 'mkitt/tabline.vim'
+Plug 'p00f/godbolt.nvim'
 call plug#end()
 
 " <leader> key
@@ -138,17 +139,23 @@ if executable(s:clip)
     augroup END
 endif
 
+" Godbolt shortcuts
+nnoremap <silent> <F9> :only \| :Godbolt<CR>
+
 " empty left pane
 let g:empty_pane_width = 45
+let g:mode_switcher = 1
 function! BuildEmptyPane()
-	execute "silent leftabove " . g:empty_pane_width . " vsplit new"
-	setlocal noma
-	setlocal nocursorline
-	setlocal nonumber
-	silent! setlocal norelativenumber
-	wincmd l
+	if g:mode_switcher
+		execute "silent leftabove " . g:empty_pane_width . " vsplit new"
+		setlocal noma
+		setlocal nocursorline
+		setlocal nonumber
+		silent! setlocal norelativenumber
+		wincmd l
+	endif
 endfunction
 autocmd VimEnter * call BuildEmptyPane()
 autocmd TabNew * call BuildEmptyPane()
-nnoremap <silent> <F5> :vsplit \| :wincmd p \| :only \| call BuildEmptyPane()<CR>
-nnoremap <silent> <F6> :vsplit \| :wincmd p \| :only<CR>
+nnoremap <silent> <F5> :let g:mode_switcher=1 \| :vsplit \| :wincmd p \| :only \| call BuildEmptyPane()<CR>
+nnoremap <silent> <F6> :let g:mode_switcher=0 \| :vsplit \| :wincmd p \| :only<CR>
