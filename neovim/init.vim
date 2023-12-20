@@ -18,7 +18,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ryanoasis/vim-devicons'
-Plug 'karb94/neoscroll.nvim'
+" Plug 'karb94/neoscroll.nvim'
 Plug 'mhinz/vim-startify', {'branch': 'center'}
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
@@ -99,7 +99,7 @@ nnoremap <silent> <A-o> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 " tab shortcuts
 nnoremap <silent> <A-,> :tabprevious<CR>
 nnoremap <silent> <A-.> :tabnext<CR>
-nnoremap <silent> <C-n> :tabnew<CR>
+nnoremap <silent> <C-n> :tabnew \| :vsplit \| :only \| call BuildEmptyPane()<CR>
 nnoremap <silent> <C-m> :tabclose<CR>
 
 " indent size
@@ -125,7 +125,7 @@ inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
 highlight SignColumn guibg=none ctermbg=none
 
 " neoscroll.nvim
-lua require('neoscroll').setup()
+"lua require('neoscroll').setup()
 
 " vim-startify
 let g:startify_center = 100
@@ -140,7 +140,7 @@ if executable(s:clip)
 endif
 
 " Godbolt shortcuts
-nnoremap <silent> <F9> :only \| :Godbolt<CR>
+nnoremap <silent> <F9> :only \| :Godbolt<CR> \| <CR>
 
 " empty left pane
 let g:empty_pane_width = 45

@@ -126,7 +126,10 @@ alias shut="wsl.exe --shutdown"
 alias a=". ranger"
 
 # chatgpt alias
-alias gpt="chatgpt --multi-line-prompt"
+alias gpt="chatgpt --multi-line-prompt --model \"gpt-3.5-turbo-1106\""
+
+# ngrok alias
+alias ungrok="sudo ~/.config/ngrok/update.sh"
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
