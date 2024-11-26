@@ -2,10 +2,7 @@
 " After install these plugins, you have to:
 " 0) Install nerdfonts and select one
 " 1) Install npm, yarn and clangd on your machine, 
-" 	 then CocInstall coc-tsserver && CocInstall clangd
-" 	 1.5) If you're on WSL2, you have to modify
-" 	 	  ~/.config/nvim/coc-settings.json, set 
-"		  \"clangd.path":"your/path/to/clangd"
+" 	 then CocInstall coc-tsserver && CocInstall coc-clangd
 
 call plug#begin('~/.config/nvim/plugged')
 Plug 'preservim/nerdtree'
@@ -72,7 +69,7 @@ set number relativenumber
 " colorcolumn
 "set colorcolumn=81
 highlight ColorColumn ctermbg=240
-autocmd FileType c,cpp,javascript call matchadd('ColorColumn', '\%81v', 100)
+autocmd FileType c,cpp,javascript,python call matchadd('ColorColumn', '\%81v', 100)
 
 " set cursor always at center
 set scrolloff=999
@@ -81,14 +78,13 @@ set scrolloff=999
 set fillchars+=eob:\ 
 
 " FZF
-let $FZF_DEFAULT_COMMAND = "find -L / -not -path \"*.cache*\" -not -path \"\/mnt*\""
+let $FZF_DEFAULT_COMMAND = "find -L ~ -not -path \"*.cache*\" -not -path \"\/mnt*\""
 let $FZF_DEFAULT_OPTS = '--color=gutter:-1 --preview "less {}"' 
 nnoremap <silent> <leader>f :FZF<CR>
 
 " ctags
 set tags=./tags,tags;$HOME
 set tags+=./TAGS,TAGS;$HOME
-set tags+=$HOME/gcc/TAGS
 
 " markdown-preview.nvim
 nnoremap <silent> <C-s> <Plug>MarkdownPreview
@@ -107,7 +103,7 @@ set tabstop=4
 set shiftwidth=4
 
 " wrap word
-set nowrap linebreak
+"set nowrap linebreak
 
 " vim-airline
 let g:airline#extensions#ions#tabline#enabled = 1
@@ -143,10 +139,10 @@ endif
 nnoremap <silent> <F9> :only \| :Godbolt<CR> \| <CR>
 
 " empty left pane
-let g:empty_pane_width = 45
+let g:empty_pane_width = &columns / 4
 let g:mode_switcher = 1
 function! BuildEmptyPane()
-	if g:mode_switcher
+	if g:mode_switcher && &columns == getenv('terminal_width')
 		execute "silent leftabove " . g:empty_pane_width . " vsplit new"
 		setlocal noma
 		setlocal nocursorline
